@@ -1,3 +1,8 @@
+// Program: Lantern - Views.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: SwiftUI screens: pairing, the streaming screen with its four-finger menu, and settings.
+//
 // Views.swift
 //
 // PURPOSE: All the SwiftUI screens: the root ContentView, the PairView (enter host and code),

@@ -1,3 +1,8 @@
+// Program: Lantern - PairingPolicy.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Rules for pairing: code lifetime, single use and the lock after too many wrong tries.
+//
 // =====================================================================================
 // PairingPolicy.swift
 //
@@ -52,7 +57,7 @@ public enum PairingAttemptResult: Sendable, Equatable {
 
 // MARK: - Policy
 
-/// idle -> codeShown -> consumed | expired | locked. Single use, 120 s TTL, 5 failures lock.
+/// idle -> codeShown -> consumed | expired | locked. Single use, default 120 s TTL (configurable, clamped to 30-900 s), 5 failures lock.
 /// Value type; the owner (an actor on the host) serialises access.
 public struct PairingPolicy: Sendable {
     public static let ttl: TimeInterval = 120   // default lifetime of a code; a host may choose a longer one (see init)

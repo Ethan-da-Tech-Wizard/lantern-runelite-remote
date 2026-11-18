@@ -1,3 +1,8 @@
+// Program: Lantern - HostServer.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Mac-side UDP server: accepts pairing and reconnect handshakes, runs the live session, sends video and receives input.
+//
 // =====================================================================================
 // HostServer.swift
 //
@@ -37,7 +42,7 @@ public struct PairedInfo: Sendable, Equatable {
 
 /// Encrypted UDP host endpoint. OFF by default: nothing binds until `start` is called.
 /// Binds only to the single local address given (wildcards refused). Callbacks run on an internal
-/// serial queue; keep them short. Never logs keys, codes or full peer identifiers.
+/// serial queue; keep them short. Never logs keys, codes or payloads. The optional onDebug hook reports the sender's address:port (rate-limited, no payload).
 /// How this works: one listener, one optional active session, plus bookkeeping for half-open handshakes and rate limits.
 public final class HostServer: @unchecked Sendable {
     /// The single serial queue that owns all mutable state below. Network callbacks are also delivered on it.

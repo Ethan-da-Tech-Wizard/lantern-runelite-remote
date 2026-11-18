@@ -1,3 +1,8 @@
+// Program: Lantern - SessionTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests a whole host session over a loopback connection.
+//
 // Area protected: HostSession end to end over a real loopback connection. It checks that
 // no capture runs before a client connects, that video frames flow to the client, that one
 // tap becomes exactly one click on the host, and that the kill switch shuts everything down.

@@ -1,3 +1,8 @@
+// Program: Lantern - DemoTransport.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Fake transport that makes a test video and logs input, for trying the app without a Mac.
+//
 // DemoTransport.swift
 //
 // PURPOSE: A fake, offline stand-in for the real network transport. It draws its own moving test

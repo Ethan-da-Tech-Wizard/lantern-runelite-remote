@@ -1,3 +1,8 @@
+// Program: Lantern - VirtualDisplayTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the virtual display description.
+//
 // Area protected: VirtualDisplaySpec, the description of a virtual phone-shaped display.
 // It covers default size, HiDPI modes, size limits, same-ratio scaling and physical size.
 import XCTest

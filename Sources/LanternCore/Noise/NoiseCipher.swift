@@ -1,3 +1,8 @@
+// Program: Lantern - NoiseCipher.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Noise protocol cipher layer: ChaCha20-Poly1305 encryption with nonces and a replay window.
+//
 // =====================================================================================
 // NoiseCipher.swift
 //

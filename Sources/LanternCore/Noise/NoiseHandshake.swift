@@ -1,3 +1,8 @@
+// Program: Lantern - NoiseHandshake.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Noise handshakes (XXpsk3 for pairing, IK for reconnecting) that establish the shared encryption keys.
+//
 // =====================================================================================
 // NoiseHandshake.swift
 //
@@ -100,7 +105,7 @@ enum NoiseHKDF {
 
 /// Noise "SymmetricState": the running secret bookkeeping of the handshake.
 /// `ck` is the chaining key (the growing pool of secrets), `h` is the running hash of the
-/// transcript, and `cipher` is the current encryption key (none until the first DH happens).
+/// transcript, and `cipher` is the current encryption key (none until the first MixKey: the first DH for IK, or the first e token for XXpsk3).
 struct NoiseSymmetricState: Sendable {
     /// Chaining key: all DH results are stirred into this.
     private(set) var ck: Data
@@ -163,7 +168,7 @@ struct NoiseSymmetricState: Sendable {
 
 // MARK: Handshake
 
-/// Noise handshake. Not thread-safe; use from one task at a time. Any failure poisons the handshake.
+/// Noise handshake. Not thread-safe; use from one task at a time. An error while processing a message poisons the handshake.
 public struct NoiseHandshake: Sendable {
     /// Short names for the X25519 key types so the code below reads easily.
     public typealias PrivateKey = Curve25519.KeyAgreement.PrivateKey
@@ -192,7 +197,7 @@ public struct NoiseHandshake: Sendable {
     private let ephemeralOverride: PrivateKey?
     /// Which message of the pattern we are on (0, 1, 2...).
     private var index = 0
-    /// Set to true after any error; once failed, the handshake can never be used again.
+    /// Set to true after any error while processing a message (not for wrong-turn or already-failed guard errors); once failed, the handshake can never be used again.
     private var failed = false
 
     /// - Parameters:
@@ -307,7 +312,7 @@ public struct NoiseHandshake: Sendable {
             // Move to the next message of the script.
             index += 1
             return out
-        } catch { failed = true; throw error }   // any error permanently poisons the handshake
+        } catch { failed = true; throw error }   // any error while processing a message permanently poisons the handshake
     }
 
     /// Processes an incoming handshake message (the other side's turn) and returns its payload.

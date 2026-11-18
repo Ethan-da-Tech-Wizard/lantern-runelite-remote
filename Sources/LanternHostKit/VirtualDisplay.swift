@@ -1,3 +1,8 @@
+// Program: Lantern - VirtualDisplay.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Optional virtual phone-shaped display for the game window (experimental).
+//
 // VirtualDisplay.swift - creates a 'virtual display' (a pretend monitor) using macOS's private CGVirtualDisplay API.
 // Who calls it: nothing else in the app sources references it yet; it takes a VirtualDisplaySpec from VirtualDisplayMath.swift.
 // Key ideas: the classes are private (undocumented), so they are found by name at run time and may disappear
@@ -148,7 +153,7 @@ public final class VirtualDisplay: DisplayProvider, @unchecked Sendable {
     }
 
     // Releasing our reference makes the display vanish.
-    /// Releases the display; it disappears from the system immediately.
+    /// Drops this provider's reference; the display disappears once no other VirtualDisplayHandle holder remains.
     public func destroy() {
         // Thread-safe.
         lock.lock(); defer { lock.unlock() }

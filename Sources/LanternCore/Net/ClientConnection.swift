@@ -1,3 +1,8 @@
+// Program: Lantern - ClientConnection.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Phone-side connection: pairing, reconnecting, keepalives and the encrypted session over UDP.
+//
 // =====================================================================================
 // ClientConnection.swift
 //
@@ -109,7 +114,7 @@ public final class ClientConnection: @unchecked Sendable {
 
     /// Latest session state (read on the owning queue).
     public var state: SessionState { q.sync { published } }
-    /// Combined drop counters: finished sessions, handshake packets and the live session.
+    /// Drop counters for finished sessions plus the live session (handshake-phase drops are not included).
     public var stats: NetStats {
         q.sync {
             // Start from the counters of sessions that already ended.
@@ -344,7 +349,7 @@ public final class ClientConnection: @unchecked Sendable {
                             sas: SAS.derive(handshakeHash: hs.handshakeHash))
             // Send message 3.
             sendHandshake(w)
-        // The host rejected us (wrong or expired code).
+        // The host rejected us because it is rate-limiting handshakes. A wrong or expired code gets no reply, so it surfaces as timedOut.
         case (.pairM1, .reject), (.pairM3, .reject):
             fail(LanternNetError.rejected)
         // Pairing step 3: first encrypted packet from the host confirms success.

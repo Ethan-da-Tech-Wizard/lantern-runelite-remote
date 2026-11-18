@@ -1,3 +1,8 @@
+// Program: Lantern - KeyStore.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Stores this device's key and the keys of paired devices (in memory or the Keychain).
+//
 // =====================================================================================
 // KeyStore.swift
 //

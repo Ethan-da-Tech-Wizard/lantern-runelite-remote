@@ -1,3 +1,8 @@
+// Program: Lantern - H264Display.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Decodes and shows the H.264 video on the phone with AVSampleBufferDisplayLayer.
+//
 // H264Display.swift
 //
 // PURPOSE: Takes compressed H.264 video frames (Annex B format) and shows them on screen.
@@ -132,7 +137,7 @@ final class DisplayLayerSink: VideoSink {
     private var needKey = true
     /// Called on main with the video's pixel size when the format changes (for letterbox math).
     var onSize: ((CGSize) -> Void)?
-    /// Called when decoding needs a key frame (the Net layer should send keyframeRequest).
+    /// Called when decoding needs a key frame (the transport sends a .requestIDR control message).
     var onNeedKeyframe: (() -> Void)?
     /// How many frames have been handed to the display layer.
     private(set) var framesShown = 0

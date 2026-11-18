@@ -1,3 +1,8 @@
+// Program: Lantern - HostInfoTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Smoke test for the host version string.
+//
 // Area protected: the LanternHostKit version string (HostInfo). A tiny smoke test that
 // the host side reports a non-empty version.
 import XCTest

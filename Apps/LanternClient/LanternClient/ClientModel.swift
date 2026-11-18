@@ -1,3 +1,8 @@
+// Program: Lantern - ClientModel.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: View-model for the phone app: pairing, connecting, status and sending input.
+//
 // ClientModel.swift
 //
 // PURPOSE: The single "brain" object for the UI. It remembers which screen is showing, the

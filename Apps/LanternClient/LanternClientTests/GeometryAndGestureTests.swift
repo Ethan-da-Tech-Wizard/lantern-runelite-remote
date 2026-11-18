@@ -1,3 +1,8 @@
+// Program: Lantern - GeometryAndGestureTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests how touches map onto the video and the gesture rules.
+//
 // Area protected: how touches on the phone map onto the video (VideoGeometry) and how
 // gestures turn into input events (GestureLogic). It checks letterbox math, coordinate
 // normalizing, clamping, and rules like one tap is one event, long press blocks drag,

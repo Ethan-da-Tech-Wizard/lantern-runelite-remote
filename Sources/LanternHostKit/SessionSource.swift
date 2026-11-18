@@ -1,3 +1,8 @@
+// Program: Lantern - SessionSource.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Video source abstraction and the real window-capture-plus-encoder source.
+//
 // SessionSource.swift - the "where does video come from?" abstraction (FrameSource) and its real
 // implementation (WindowFrameSource = one window captured then H.264 encoded).
 // Who calls it: HostSession (starts/stops it when a client connects/leaves) and lantern-host serve.

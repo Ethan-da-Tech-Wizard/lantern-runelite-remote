@@ -1,3 +1,8 @@
+// Program: Lantern - InputPlan.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Plans which mouse or keyboard actions each phone event means for the captured window.
+//
 // InputPlan.swift - decides WHAT mouse/keyboard actions an incoming phone event means.
 // Who calls it: InputInjector.apply (real use) and lantern-host's inject-test dry run.
 // Key ideas: an event such as "tap at 0.5, 0.5" is planned into primitive steps (move, press, release)
@@ -27,7 +32,7 @@ public enum PlannedAction: Equatable, Sendable {
     // Typed text plus modifier bits (shift/ctrl/alt/cmd).
     case keyText(String, mods: UInt8)
 
-    /// Short human-readable text for logs and the dry run. Coordinates are rounded to whole numbers.
+    /// Short human-readable text for logs and the dry run. Coordinates are truncated to whole numbers.
     public var description: String {
         // One text format per case. Note the typed text itself is never printed, only its length.
         switch self {

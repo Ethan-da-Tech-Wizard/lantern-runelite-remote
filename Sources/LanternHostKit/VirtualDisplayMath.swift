@@ -1,3 +1,8 @@
+// Program: Lantern - VirtualDisplayMath.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Size and mode calculations and error types for the virtual display.
+//
 // VirtualDisplayMath.swift - pure size/mode calculations and error types for the phone-shaped virtual display.
 // Who calls it: VirtualDisplay.swift (which makes the real display from a spec).
 // Key ideas: a 'virtual display' is a pretend monitor macOS believes exists; validating its size here,

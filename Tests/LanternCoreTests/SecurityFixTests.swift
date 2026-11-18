@@ -1,3 +1,8 @@
+// Program: Lantern - SecurityFixTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Regression tests for past security fixes.
+//
 // Area protected: regression tests for security fixes in the network layer. Each group
 // guards a past weakness: stale or delayed input must never be injected late (freshness and
 // rate limits), junk or repeated pairing attempts must not lock out the real user or flood the

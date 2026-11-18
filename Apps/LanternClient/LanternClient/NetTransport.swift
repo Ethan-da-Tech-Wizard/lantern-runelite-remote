@@ -1,3 +1,8 @@
+// Program: Lantern - NetTransport.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Real transport: connects the phone app to the Mac host over the encrypted network layer.
+//
 // NetTransport.swift
 //
 // PURPOSE: The real transport. It adapts LanternCore's ClientConnection (encrypted UDP on the local
@@ -185,8 +190,8 @@ final class NetTransport: SessionTransport {
     /// True if the host text parses as ip:port (no network used).
     func validate(host: String) -> Bool { (try? Self.parse(host)) != nil }
 
-    /// TODO: switch to ClientConnection.requestKeyframe() once it exists in LanternCore/Net (grep found none on 2026-11-17).
-    /// Until then the public control message is used directly (same wire effect as the existing connect() call).
+    /// ClientConnection.requestKeyframe() exists (rate-limited, returns Bool); this could delegate to it.
+    /// For now .requestIDR is sent directly with no rate limit.
     func requestKeyframe() { try? conn?.send(control: .requestIDR) }
 
     /// Tells the Mac the bitrate we want (kbps converted to bits per second).

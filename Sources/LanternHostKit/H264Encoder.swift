@@ -1,3 +1,8 @@
+// Program: Lantern - H264Encoder.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Compresses captured frames to H.264 with VideoToolbox, tuned for low delay.
+//
 // H264Encoder.swift - compresses raw video frames into H.264 using VideoToolbox (hardware when possible).
 // Who calls it: WindowFrameSource (serving) and lantern-host's capture-test.
 // Key ideas for beginners: raw frames are huge, so we compress them. A 'keyframe' can be decoded alone;

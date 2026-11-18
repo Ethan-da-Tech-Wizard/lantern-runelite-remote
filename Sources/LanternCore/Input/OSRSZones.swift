@@ -1,3 +1,8 @@
+// Program: Lantern - OSRSZones.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Decides whether a touch lands on the 3D game world (camera drag) or on an interface panel (normal drag) in the Fixed Classic layout.
+//
 // =====================================================================================
 // OSRSZones.swift
 //

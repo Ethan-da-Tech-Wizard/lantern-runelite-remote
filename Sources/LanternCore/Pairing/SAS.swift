@@ -1,3 +1,8 @@
+// Program: Lantern - SAS.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Short authentication string: digits both devices can compare to confirm they paired with each other.
+//
 // =====================================================================================
 // SAS.swift
 //

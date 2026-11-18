@@ -1,22 +1,40 @@
 #!/bin/bash
+# Program: Lantern - lantern-play
+# Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+# Last Modified: 2026-11-18
+# Purpose: Starts the Lantern host on the RuneLite game window and prints the pairing code.
+#
 # lantern-play: start the Lantern host on the RuneLite game window and print the pairing code.
 # Prerequisite (human, once per session): start the game from the JAGEX LAUNCHER (Game client = RuneLite).
 # Never starts the game for you and never types credentials. Nothing here uses root or the network beyond your LAN.
+# Only -u here (not -e) so we can handle each failure ourselves with a clear message.
 set -u
+# Find the project folder (one level above scripts/) as an absolute path.
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Path to the host program built earlier.
 HOST="$ROOT/.build/debug/lantern-host"
+# Network port: the user's choice via LANTERN_PORT, else 47711.
 PORT="${LANTERN_PORT:-47711}"
+# How long the pairing code stays valid, in minutes (default 10).
 MINUTES="${LANTERN_PAIR_MINUTES:-10}"
+# The Mac's Wi-Fi address: use LANTERN_BIND if set, else ask the system for the address on the first, then second, Wi-Fi interface.
 IP="${LANTERN_BIND:-$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null)}"
+# If the host program is missing or not executable, tell the user how to build it and stop.
 [ -x "$HOST" ] || { echo "Build first: (cd $ROOT && swift build --product lantern-host)"; exit 1; }
+# If no Wi-Fi address was found, tell the user and stop.
 [ -n "$IP" ] || { echo "No Wi-Fi address found. Join the same Wi-Fi as the phone."; exit 1; }
 # the game window is titled "RuneLite - <character>"; the plain "RuneLite" window is a login-screen copy, not ours
+# Ask the host for its window list (tab-separated), and take the ID of the first row whose app is RuneLite and whose title starts with 'RuneLite - '.
 WID=$("$HOST" list-windows 2>/dev/null | awk -F'\t' '$2=="RuneLite" && $3 ~ /^RuneLite - /{print $1; exit}')
+# WID empty means no game window was found.
 if [ -z "$WID" ]; then
   echo "No RuneLite game window found."
   echo "Open the Jagex Launcher, pick Game client = RuneLite, press Play. Then run this again."
+  # Exit code 2 = the game is not open yet.
   exit 2
 fi
+# Show the user what to type on the phone.
 echo "Game window id $WID. Phone address: $IP:$PORT"
 echo "On the phone: Lantern app > address above > pairing code below (valid ${MINUTES} min)."
+# 'exec' replaces this script with the host program, which starts serving to the phone with the pairing code, and keeps the game window focused.
 exec "$HOST" serve --bind "$IP" --port "$PORT" --window-id "$WID" --pair --pair-minutes "$MINUTES" --auto-focus

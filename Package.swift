@@ -1,4 +1,9 @@
 // swift-tools-version:6.0
+// Program: Lantern - Package.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: SwiftPM manifest: declares the LanternCore and LanternHostKit libraries, the lantern-host program and the test targets.
+//
 // Package.swift - the SwiftPM manifest (the recipe that tells Swift what to build).
 // Who reads it: the `swift build` / `swift test` tools, never our own code.
 // Key ideas: three build units (LanternCore, LanternHostKit, lantern-host) plus two test targets,

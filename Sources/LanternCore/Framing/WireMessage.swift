@@ -1,3 +1,8 @@
+// Program: Lantern - WireMessage.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Outer packet format: magic bytes, version, message types and the encrypted data header.
+//
 // =====================================================================================
 // WireMessage.swift
 //
@@ -113,7 +118,7 @@ struct FrameWriter {
 
 // MARK: - Message types
 
-/// The type byte that follows the 3-byte header.
+/// The type byte (header byte 3), which follows the 2 magic bytes and the version byte.
 public enum WireType: UInt8, Sendable {
     case pairM1 = 0x01, pairM2 = 0x02, pairM3 = 0x03
     case ikM1 = 0x10, ikM2 = 0x11

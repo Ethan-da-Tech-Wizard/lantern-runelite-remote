@@ -1,3 +1,8 @@
+// Program: Lantern - SecureSession.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: One established encrypted session: sequence numbers, acknowledgements, keepalives and replay protection.
+//
 // =====================================================================================
 // SecureSession.swift
 //
@@ -165,7 +170,7 @@ struct SecureSession: Sendable {
             u.tries += 1; u.nextSend = now.addingTimeInterval(cfg.reliableRetransmit)
             unacked[seq] = u
         }
-        // Send a PING if we have been quiet for the keepalive interval, so the peer knows we are alive.
+        // Send a PING every keepaliveInterval, whether or not other traffic was sent.
         if now.timeIntervalSince(lastPingSent) >= cfg.keepaliveInterval {
             lastPingSent = now
             if let d = try? unreliable(.control(.ping)) { out.append(d) }
@@ -208,7 +213,7 @@ struct SecureSession: Sendable {
             // a huge result really means "behind us".
             let ahead = seq &- nextExpected
             if ahead >= 0x8000_0000 { return res }              // already delivered: duplicate
-            if ahead >= Self.reorderWindow { return res }       // too far ahead: sender will retry
+            if ahead >= Self.reorderWindow { return res }       // Too far ahead: discarded, but already ACKed above, so it is not retried (unreachable from an honest peer because maxUnacked <= reorderWindow).
             // Store it, then hand over every message that is now consecutive, in order.
             buffered[seq] = (msg, sentMs)
             while let m = buffered.removeValue(forKey: nextExpected) {

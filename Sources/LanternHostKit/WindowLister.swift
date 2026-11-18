@@ -1,3 +1,8 @@
+// Program: Lantern - WindowLister.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Lists the windows macOS currently has (title, owner, size, layer).
+//
 // WindowLister.swift - asks macOS which windows exist (title, owner, size, layer).
 // Who calls it: WindowCapturer.listWindows, InputInjector's SystemWindowEnvironment (frame lookups,
 // "what window is on top at this point?"), and lantern-host.

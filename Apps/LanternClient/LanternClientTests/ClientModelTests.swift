@@ -1,3 +1,8 @@
+// Program: Lantern - ClientModelTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the phone app's view-model.
+//
 // Area protected: ClientModel, the view-model behind the phone app screens, plus the
 // real transport's host check and forget behavior. It checks which screen shows, that bad
 // codes and bad hosts never reach the network layer, state changes, that input is sent only

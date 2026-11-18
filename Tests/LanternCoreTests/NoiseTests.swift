@@ -1,3 +1,8 @@
+// Program: Lantern - NoiseTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the Noise handshake and encryption.
+//
 // Area protected: the Noise handshake and transport encryption in LanternCore. It checks
 // the code against published known-answer test vectors, normal handshake round trips for both
 // patterns, many failure cases (wrong key, tampering, wrong prologue, bad order, bad config),

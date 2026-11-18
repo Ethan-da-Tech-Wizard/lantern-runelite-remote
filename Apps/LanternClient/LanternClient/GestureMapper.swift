@@ -1,7 +1,12 @@
+// Program: Lantern - GestureMapper.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Turns phone touches into Lantern input events (tap, long-press, drag, camera drag, pinch zoom).
+//
 // GestureMapper.swift
 //
 // PURPOSE: Turns finger gestures on the video view into InputEvents (tap, long-press, drag,
-// camera drag, pinch zoom). The Mac then replays them as mouse clicks, drags and scrolls.
+// camera drag, pinch zoom). The Mac replays touches as mouse clicks, drags, camera (middle-button) drags and zoom.
 //
 // WHO CALLS IT: VideoView (StreamView.swift) owns a GestureMapper and calls `attach(to:)`.
 // Each event is passed to the `emit` closure, which ends up in ClientModel.send.
@@ -53,7 +58,7 @@ enum VideoGeometry {
 }
 
 /// Pure gesture rules (no UIKit touches): one gesture -> exactly one event (a drag is one start/move*/end
-/// sequence); scroll and zoom are emitted once, at gesture end, as the total. No timers, repeats or queues.
+/// sequence); only zoom is emitted once, at gesture end (scrollEnded exists but no recognizer calls it). No timers, repeats or queues.
 // A plain struct holding the gesture state; `mutating` methods change it, other methods only read it.
 struct GestureLogic {
     /// Pixel size of the video; starts as 16:9 until the real size is reported.
@@ -120,8 +125,8 @@ struct GestureLogic {
         let n = VideoGeometry.normalize(p, videoSize: videoSize, bounds: bounds, clamp: true) ?? lastDrag
         return .dragEnd(x: n.x, y: n.y)
     }
-    /// Two-finger drag = camera rotate (middle-button drag on the Mac, which is how OSRS rotates the camera).
-    /// Starts a camera drag, if nothing else is in progress.
+    /// Camera rotate = middle-button drag on the Mac (how OSRS rotates the camera); triggered by a one-finger drag on the game world.
+    /// Starts a camera drag, if nothing else is in progress. Now reached from dragBegan for a ONE-finger drag that starts on the game world (OSRSZones.isWorld).
     mutating func camBegan(_ p: CGPoint, bounds: CGRect) -> InputEvent? {
         // Only start if nothing else is in progress and the position can be computed (clamped to the video).
         guard !longPressActive, !dragging, !camDragging,
@@ -194,7 +199,7 @@ final class GestureMapper: NSObject, UIGestureRecognizerDelegate {
         let drag = UIPanGestureRecognizer(target: self, action: #selector(onDrag(_:)))
         // Allow only one finger for this pan.
         drag.minimumNumberOfTouches = 1; drag.maximumNumberOfTouches = 1
-        // A second pan recognizer for exactly two fingers (used for camera rotate).
+        // A two-finger pan recognizer is built but intentionally NOT attached (kept so onScroll compiles; dead code).
         let scroll = UIPanGestureRecognizer(target: self, action: #selector(onScroll(_:)))
         scroll.minimumNumberOfTouches = 2; scroll.maximumNumberOfTouches = 2
         // Pinch recognizer: two fingers moving apart or together (zoom).
@@ -265,7 +270,7 @@ final class GestureMapper: NSObject, UIGestureRecognizerDelegate {
         default: break
         }
     }
-    /// Two-finger drag callback: used to rotate the camera (a middle-button drag on the Mac).
+    /// Unused two-finger callback (its recognizer is not attached); the camera now rotates via onDrag on the game world.
     @objc private func onScroll(_ g: UIPanGestureRecognizer) {
         // Without a view there is nothing to convert.
         guard let v = view else { return }

@@ -1,3 +1,8 @@
+// Program: Lantern - VideoReassembly.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Puts fragmented video frames back together on the phone and detects lost frames.
+//
 // =====================================================================================
 // VideoReassembly.swift
 //

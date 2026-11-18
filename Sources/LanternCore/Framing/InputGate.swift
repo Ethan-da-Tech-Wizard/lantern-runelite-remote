@@ -1,3 +1,8 @@
+// Program: Lantern - InputGate.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Host-side rate limiting, held-button tracking and staleness checks that every incoming input event must pass.
+//
 // =====================================================================================
 // InputGate.swift
 //
@@ -51,7 +56,7 @@ public struct InputRateLimiter: Sendable {
     public let minSpacingMs: UInt64
     /// Camera drag moves may come faster than other classes so rotation feels smooth.
     public static let camMoveSpacingMs: UInt64 = 20
-    /// Global cap over all classes (except dragEnd): at most `globalMax` admitted events per `globalWindowMs`.
+    /// Global cap over all classes (except dragEnd and camEnd, which are never limited): at most `globalMax` admitted events per `globalWindowMs`.
     public let globalMax: Int
     public let globalWindowMs: UInt64
     /// When each class was last admitted.
@@ -188,7 +193,7 @@ public struct HostInputGate: Sendable {
     }
 
     /// `sentMs` is the sender's monotonic stamp; events older than 250 ms are dropped, never injected late.
-    /// A late dragEnd is still admitted (it only releases a held button) so a stall cannot leave a button down.
+    /// A late dragEnd or camEnd is still admitted (they only release a held button) so a stall cannot leave a button down.
     public mutating func admit(_ e: InputEvent, nowMs: UInt64, sentMs: UInt32) -> Bool {
         let age = freshness.age(sentMs: sentMs, nowMs: nowMs)
         if age > InputFreshness.maxAgeMs {

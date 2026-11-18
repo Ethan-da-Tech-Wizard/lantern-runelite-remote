@@ -1,3 +1,8 @@
+// Program: Lantern - StreamView.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Full-screen video view with gesture, menu and keyboard recognizers.
+//
 // StreamView.swift
 //
 // PURPOSE: Bridges UIKit into SwiftUI. It builds the real UIView that shows the video and catches
@@ -53,7 +58,7 @@ final class VideoView: UIView {
         keys.emit = emit
         // The key catcher is invisible; it just has to be in the view tree to take focus.
         addSubview(keys)
-        // Install tap / long-press / drag / two-finger / pinch recognizers on this view.
+        // Install tap / long-press / one-finger drag / pinch recognizers on this view (camera rotate is the one-finger drag on the game world).
         mapper.attach(to: self)
         // Four-finger tap -> menu.
         let four = UITapGestureRecognizer(target: self, action: #selector(menuTapped))

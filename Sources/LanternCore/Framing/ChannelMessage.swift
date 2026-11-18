@@ -1,3 +1,8 @@
+// Program: Lantern - ChannelMessage.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Defines the messages carried inside the encrypted channel (video, input, control) and how they are encoded and decoded.
+//
 // =====================================================================================
 // ChannelMessage.swift
 //

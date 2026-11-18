@@ -1,3 +1,8 @@
+// Program: Lantern - OSRSZonesTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the world-versus-interface touch zones.
+//
 // Area protected: OSRSZones, the helper that decides whether a point on the
 // streamed picture lies over the game world (where a tap means "walk/click in
 // the world") or over an interface area such as inventory, chat, minimap or a

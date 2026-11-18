@@ -1,3 +1,8 @@
+// Program: Lantern - WindowGeometry.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Window description type and the math converting phone touch fractions to screen points.
+//
 // WindowGeometry.swift - the WindowInfo snapshot type and the math that turns phone touch coordinates
 // (0 to 1 across the window) into real screen points.
 // Who calls it: InputPlanner (planning events), InputInjector (bounds checks), CaptureGuard and

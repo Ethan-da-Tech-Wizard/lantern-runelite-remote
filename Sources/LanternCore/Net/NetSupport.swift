@@ -1,3 +1,8 @@
+// Program: Lantern - NetSupport.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Shared networking pieces: configuration, errors, connection states, key derivation and private-address checks.
+//
 // =====================================================================================
 // NetSupport.swift
 //
@@ -44,7 +49,7 @@ public enum LanternNetError: Error, Equatable, Sendable {
     /// Sending problems: too many unacknowledged messages waiting, or the session is already closed.
     case sendQueueFull
     case closed
-    /// Pairing input was not a valid code, the host said no (wrong/expired code), or another operation is already running.
+    /// Pairing input was not a valid code, the host rejected us because it is rate-limiting handshakes (a wrong or expired code gets no reply, so it surfaces as timedOut), or another operation is already running.
     case invalidPairingInput
     case rejected
     case busy
@@ -63,7 +68,7 @@ public enum CloseReason: Sendable, Equatable {
 public enum SessionState: Sendable, Equatable {
     /// The four phases of one session; `established` carries only the short peer tag, never the full key.
     case idle
-    /// Waiting for the first handshake message (before a session exists).
+    /// Handshake in progress (from the first message sent until the session is established or fails).
     case handshaking
     /// Handshake done; session established; carries the peer tag.
     case established(peerTag: String)
@@ -138,7 +143,7 @@ public struct NetConfig: Sendable {
     public var maxPairFailuresPerSource = 3     // authenticated wrong-code failures one source may spend per code (< 5 lock)
     /// Length of the sliding window used by the per-source rate limit above.
     public var handshakeWindow: TimeInterval = 10
-    /// How often to send a PING when otherwise quiet, so the other side knows we are alive.
+    /// Send a PING every keepaliveInterval, whether or not other traffic was sent.
     public var keepaliveInterval: TimeInterval = 2
     /// If we hear nothing for this long, the session is considered dead.
     public var idleTimeout: TimeInterval = 10
@@ -169,8 +174,8 @@ public func peerTag(_ publicKey: Data) -> String {
 enum NetCrypto {
     /// Mixed into the Noise handshake so both sides must agree on the protocol name and version, or the handshake fails.
     static let prologue = Data("twu-stream-v1".utf8) + Data([FrameCodec.version])
-    /// Turn the pairing credential (the code's bytes) into a 32-byte pre-shared key using HKDF, a standard
-    /// "key stretcher": same input gives the same output, and the salt keeps this key separate from other uses.
+    /// Turn the pairing credential (the code's bytes) into a 32-byte pre-shared key.
+    /// Derive a 32-byte PSK with HKDF-SHA256 (deterministic; the salt domain-separates it). This is not a brute-force-resistant stretch.
     static func psk(fromCredential c: Data) -> Data {
         let k = HKDF<SHA256>.deriveKey(inputKeyMaterial: SymmetricKey(data: c),
                                        salt: Data("twu-stream-pair-v1".utf8), info: Data(), outputByteCount: 32)
@@ -195,8 +200,8 @@ enum NetCrypto {
 }
 
 /// Why this exists: names come from another device, so we never trust them as-is. This cleans them before display.
-/// Peer-supplied device names are untrusted text: strip control, format (bidi overrides), separator,
-/// private-use and unassigned scalars plus replacement characters from a truncated UTF-8 tail.
+/// Peer-supplied device names are untrusted text: strip control, format (bidi), line/paragraph separator,
+/// private-use, unassigned and surrogate scalars, plus U+FFFD.
 enum PeerName {
     /// Namespace for the name-cleaning function (an enum with only static members).
     /// Maximum number of raw bytes of a name we will even look at.

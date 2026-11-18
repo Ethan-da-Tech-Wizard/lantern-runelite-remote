@@ -1,3 +1,8 @@
+// Program: Lantern - InputEvent.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Defines every touch/keyboard event the phone can send and its compact wire format.
+//
 // =====================================================================================
 // InputEvent.swift
 //
@@ -16,7 +21,7 @@
 //   - QUANTIZING: a Float is squeezed into a 16-bit whole number (0...65535) to save bytes, and
 //     expanded back on the other side (a tiny rounding error is expected).
 //   - CLAMPING: forcing a number into its allowed range so bad/hostile data cannot cause trouble.
-//   - Decoding never trusts the sender: it checks lengths, types and ranges and throws an error
+//   - Decoding never trusts the sender: it clamps out-of-range floats; only bad lengths, types or key size throw an error
 //     instead of crashing.
 // =====================================================================================
 

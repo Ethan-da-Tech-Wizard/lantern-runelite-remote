@@ -1,3 +1,8 @@
+// Program: Lantern - main.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Entry point of the lantern-host command-line program on the Mac: list windows, test capture/input, and serve a window to a paired phone.
+//
 // main.swift - entry point of the `lantern-host` command-line program on the Mac.
 // Who calls it: you, from Terminal. Commands: list-windows, capture-test, inject-test, serve.
 // Key ideas: the host is OFF by default (running with no command starts nothing). Every command works on a
@@ -25,7 +30,7 @@ func usage() -> Never {
       list-windows
       capture-test --window <substring> --out new-file.h264 [--seconds N<=30 | --long] [--fps N] [--kbps N] --confirm-window <id>
         (run once without --confirm-window to resolve and print the window; rerun with the printed id)
-      inject-test --window <substring> [--event tap:0.5,0.5 | long:x,y | dragstart:x,y | dragmove:x,y | dragend:x,y | scroll:dx,dy | zoom:d | key:text] [--really] [--allow-modifiers]
+      inject-test --window <substring> [--event tap:0.5,0.5 | long:x,y | dragstart:x,y | dragmove:x,y | dragend:x,y | camstart:x,y | camend:x,y | cammove:x,y | scroll:dx,dy | zoom:d | key:text] [--really] [--allow-modifiers]
         (dry run by default: prints what WOULD be injected; --really posts real CGEvents)
       serve --bind <private LAN-IP> --port N --window-id <id from list-windows> [--pair [--qr]] [--allow-modifiers] [--auto-focus] [--keychain] [--pair-minutes N (0.5-15, default 2)] [--debug]
         (starts the encrypted server for that ONE window; --bind and --window-id are required, no wildcard, RFC1918/link-local only; key modifiers are stripped unless --allow-modifiers; capture runs only while a client is connected;
@@ -196,7 +201,7 @@ func injectTest(_ args: [String]) -> Int32 {
             // Dry run: plans against the window frame only; reads nothing that needs permission, injects nothing.
             // Show the plan for each event.
             for e in events {
-                // A nil plan means the coordinates were out of range.
+                // A nil plan means out-of-range coordinates or unsafe key text.
                 guard let plan = InputPlanner.plan(e, frame: win.frame, allowModifiers: args.contains("--allow-modifiers")) else { print("\(e): DROPPED (out of range)"); continue }
                 // Print the actions that WOULD happen.
                 print("WOULD inject \(e) -> " + plan.map(\.description).joined(separator: ", "))
@@ -297,6 +302,7 @@ func serve(_ args: [String]) async -> Int32 {
         if args.contains("--pair") {
             // QR mode prints a payload to turn into a QR code; otherwise a typed code.
             if args.contains("--qr") {
+                // The printed lifetime text is fixed; the real lifetime follows --pair-minutes.
                 print("pairing QR payload (valid ~2 min, single use): \(try server.beginPairingQR(addressHint: "\(bind):\(bound)").encoded())")
             } else {
                 print("pairing code (valid ~\(Int(cfg.pairingCodeLifetime / 60 * 10) % 10 == 0 ? "\(Int(cfg.pairingCodeLifetime / 60))" : String(format: "%.1f", cfg.pairingCodeLifetime / 60)) min, single use): \(try server.beginPairing().displayString)")

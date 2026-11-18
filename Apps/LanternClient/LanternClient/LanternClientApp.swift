@@ -1,3 +1,8 @@
+// Program: Lantern - LanternClientApp.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: App entry point for the iPhone app.
+//
 // LanternClientApp.swift
 //
 // PURPOSE: The app's entry point. iOS starts here when the app launches.

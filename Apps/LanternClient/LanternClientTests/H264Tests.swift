@@ -1,3 +1,8 @@
+// Program: Lantern - H264Tests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the phone app's H.264 helpers.
+//
 // Area protected: the H.264 helpers in the client app. It checks splitting a byte stream
 // into units (NALs), building a video format from SPS/PPS, refusing bad input, and that the
 // display sink survives garbage without crashing and asks for a new keyframe.

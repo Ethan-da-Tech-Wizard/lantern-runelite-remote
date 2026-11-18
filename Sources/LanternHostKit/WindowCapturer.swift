@@ -1,3 +1,8 @@
+// Program: Lantern - WindowCapturer.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Captures one window as video frames with ScreenCaptureKit.
+//
 // WindowCapturer.swift - captures ONE window as video frames using ScreenCaptureKit.
 // Who calls it: WindowFrameSource (the real video source) and lantern-host (list-windows, capture-test,
 // inject-test, serve).

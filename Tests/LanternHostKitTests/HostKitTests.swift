@@ -1,3 +1,8 @@
+// Program: Lantern - HostKitTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests window geometry, input planning and the injector rules.
+//
 // Area protected: the host side of the app (LanternHostKit). It covers window geometry
 // (mapping 0 to 1 coordinates to screen points), the input injector's safety rules (only act
 // when the target window is in front, focused, not covered, and the point is inside; rate
@@ -399,7 +404,7 @@ final class AnnexBTests: XCTestCase {
 // Tests for the H.264 encoder using made-up frames.
 final class EncoderTests: XCTestCase {
     // Scenario: encode 45 synthetic frames with a forced keyframe at frame 20.
-    // Expected: 45 packets; first and 20th are keyframes; the first has SPS and PPS first; parameter sets only on the first; time stamps are in order.
+    // Expected: 45 packets; frames 0 and 20 (zero-based) are keyframes; the first has SPS and PPS first; parameter sets only on the first; time stamps are in order.
     // Why it matters: checks encoder output end to end. It is skipped where the hardware encoder is not available.
     func testSyntheticFrames() throws {
         // Frame size.

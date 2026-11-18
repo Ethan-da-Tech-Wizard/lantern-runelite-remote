@@ -1,3 +1,8 @@
+// Program: Lantern - InputInjector.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Turns phone input into real Mac mouse and keyboard events, only after strict window, focus and cover checks.
+//
 // InputInjector.swift - turns phone touches/keys into real mouse/keyboard events on the Mac, but only after
 // many safety checks pass.
 // Who calls it: HostSession (serving) and lantern-host's inject-test.
@@ -30,7 +35,7 @@ public enum InjectError: Error, Equatable, CustomStringConvertible, Sendable {
     // Same as occluded, with a description of what covers it (for the log).
     case occludedBy(String)  // same, naming the covering window (owner/layer) for the log
     // The point is not inside the target window.
-    case outsideWindow       // coordinates invalid, or pointer not inside window for scroll/key
+    case outsideWindow       // event coordinates or text invalid, or point/pointer not inside the window
     // The rate limiter / drag-state gate said no.
     case rejected            // rate limit / drag-state gate
     // The program lacks the Accessibility permission.
@@ -114,7 +119,7 @@ public final class RecordingSink: ActionSink, @unchecked Sendable {
 }
 
 // The heart of input safety: it checks many rules, and only then lets the sink act.
-/// Injects exactly the planned actions of one InputEvent per `apply`. No timers, retries or queueing; auto-focus only with the explicit opt-in flag.
+/// Injects exactly the planned actions of one InputEvent per `apply`. No queueing or background timers. With the opt-in auto-focus flag, apply blocks briefly (up to 800 ms per wait) polling and re-requesting the raise.
 public final class InputInjector: @unchecked Sendable {
     // The id of the one window we may act on.
     public let target: UInt32
@@ -398,7 +403,7 @@ public final class CGEventSink: ActionSink, @unchecked Sendable {
         guard AXIsProcessTrusted() else { throw InjectError.accessibilityDenied }
         // One branch per action kind.
         switch a {
-        // Mouse events: type, position, button. Short pauses before presses help the app notice the hover.
+        // Mouse events: type, position, button. Short pauses before the left/middle press (and before the left release) let the app see the hover.
         case .move(let p): mouse(.mouseMoved, p, .left)
         case .leftDown(let p): Thread.sleep(forTimeInterval: 0.02); mouse(.leftMouseDown, p, .left, click: 1)  // let Java/AWT see the hover before the press (audit 2026-11-18)
         case .leftUp(let p): Thread.sleep(forTimeInterval: 0.03); mouse(.leftMouseUp, p, .left, click: 1)

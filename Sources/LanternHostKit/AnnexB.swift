@@ -1,3 +1,8 @@
+// Program: Lantern - AnnexB.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Converts H.264 data between the AVCC and Annex B formats.
+//
 // AnnexB.swift - converts H.264 NAL units between two framings (length-prefixed AVCC and start-code Annex B).
 // Who calls it: H264Encoder (turns the encoder's output into the stream we send); tests also use nalUnits.
 // Key ideas: pure functions with no system calls, so they are easy to test; malformed input returns nil.

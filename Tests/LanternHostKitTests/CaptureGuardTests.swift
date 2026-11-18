@@ -1,3 +1,8 @@
+// Program: Lantern - CaptureGuardTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the capture safety checks.
+//
 // Area protected: CaptureGuard, the safety checks that run before a screen capture
 // starts. It must pick exactly one window, require explicit confirmation, limit the
 // recording length, shorten titles, and never overwrite or follow links into

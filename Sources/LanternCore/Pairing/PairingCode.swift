@@ -1,3 +1,8 @@
+// Program: Lantern - PairingCode.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Creates and parses the one-time pairing code and the pairing QR payload.
+//
 // =====================================================================================
 // PairingCode.swift
 //

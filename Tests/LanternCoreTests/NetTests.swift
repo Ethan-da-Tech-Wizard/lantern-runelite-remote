@@ -1,3 +1,8 @@
+// Program: Lantern - NetTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the real network layer: pairing, sessions and reconnecting.
+//
 // Area protected: the real network layer in LanternCore (HostServer, ClientConnection and
 // SecureSession). Tests run over loopback UDP sockets with fast timeouts. They cover: the host
 // being off by default and refusing wildcard binds, full pairing and data flow, QR pairing and

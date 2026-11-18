@@ -1,3 +1,8 @@
+// Program: Lantern - Transport.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Protocol describing what the phone app needs from a transport.
+//
 // Transport.swift
 //
 // PURPOSE: Defines the small "seam" (set of agreements) between the app's screens and whatever

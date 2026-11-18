@@ -1,3 +1,8 @@
+// Program: Lantern - ReplayWindow.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Sliding window that rejects duplicated or replayed packets.
+//
 // =====================================================================================
 // ReplayWindow.swift
 //

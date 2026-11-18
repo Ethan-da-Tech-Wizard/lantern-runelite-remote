@@ -1,3 +1,8 @@
+// Program: Lantern - AutoFocusTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests auto-focus and the window-cover check.
+//
 // Area protected: the input injector's focus handling (auto-focus) and the window
 // occlusion check. These tests make sure taps are only injected when the target app is
 // in front (or was successfully brought to the front), and that a full-screen
