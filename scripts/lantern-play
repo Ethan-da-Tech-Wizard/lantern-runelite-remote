@@ -1,9 +1,14 @@
 #!/bin/bash
-# Program: Lantern - lantern-play
-# Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-# Last Modified: 2026-11-18
-# Purpose: Starts the Lantern host on the RuneLite game window and prints the pairing code.
-#
+# ==============================================================================
+# Program: lantern-play
+# Programmer: Ethan-da-Tech-Wizard
+# Course: CIS 156 / Advanced Systems
+# Last Modified: November 18, 2026
+# Purpose: Interactive launcher starting lantern-host on the active RuneLite window and displaying the pairing code.
+#          Inputs: Environment overrides (LANTERN_PORT, LANTERN_BIND) and active RuneLite window ID.
+#          Outputs: Starts lantern-host daemon and prints connection pairing code to stdout.
+#          Design Rationale: Streamlines user experience into a single command while enforcing human-in-the-loop pairing.
+# ==============================================================================
 # lantern-play: start the Lantern host on the RuneLite game window and print the pairing code.
 # Prerequisite (human, once per session): start the game from the JAGEX LAUNCHER (Game client = RuneLite).
 # Never starts the game for you and never types credentials. Nothing here uses root or the network beyond your LAN.

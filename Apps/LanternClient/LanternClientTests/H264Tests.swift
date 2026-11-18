@@ -1,8 +1,13 @@
-// Program: Lantern - H264Tests.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Tests the phone app's H.264 helpers.
-//
+// ==============================================================================
+// Program: H264Tests.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Unit tests for H.264 Annex B parsing, parameter set extraction, and sample buffer construction.
+//          Inputs: Sample H.264 byte streams, NAL unit chunks, and SPS/PPS headers.
+//          Outputs: Assertions verifying correct NAL delimiter detection and AVCC conversions.
+//          Design Rationale: Guards video decompression logic against malformed or fragmented network payloads.
+// ==============================================================================
 // Area protected: the H.264 helpers in the client app. It checks splitting a byte stream
 // into units (NALs), building a video format from SPS/PPS, refusing bad input, and that the
 // display sink survives garbage without crashing and asks for a new keyframe.

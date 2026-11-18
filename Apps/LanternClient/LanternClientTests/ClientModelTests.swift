@@ -1,8 +1,14 @@
-// Program: Lantern - ClientModelTests.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Tests the phone app's view-model.
-//
+// ==============================================================================
+// Program: ClientModelTests.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Unit test suite validating client view-model state transitions and input forwarding.
+//          Inputs: Mock transport instances and synthetic UI actions.
+//          Outputs: Assertions confirming correct state mutations and event dispatches.
+//          Design Rationale: Verifies robust state machine transitions across pairing, connecting,
+//          streaming, and error states.
+// ==============================================================================
 // Area protected: ClientModel, the view-model behind the phone app screens, plus the
 // real transport's host check and forget behavior. It checks which screen shows, that bad
 // codes and bad hosts never reach the network layer, state changes, that input is sent only

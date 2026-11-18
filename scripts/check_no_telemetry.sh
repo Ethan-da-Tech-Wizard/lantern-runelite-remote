@@ -1,9 +1,14 @@
 #!/bin/bash
-# Program: Lantern - check_no_telemetry.sh
-# Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-# Last Modified: 2026-11-18
-# Purpose: Fails if the code or binaries mention analytics or crash-reporting SDKs.
-#
+# ==============================================================================
+# Program: check_no_telemetry.sh
+# Programmer: Ethan-da-Tech-Wizard
+# Course: CIS 156 / Advanced Systems
+# Last Modified: November 18, 2026
+# Purpose: Security and privacy audit script scanning codebase and binaries for telemetry SDKs.
+#          Inputs: Source files, build artifacts, and linked binary libraries.
+#          Outputs: Pass/fail audit report ensuring complete absence of analytics or telemetry strings.
+#          Design Rationale: Validates privacy promises by failing builds if third-party tracking identifiers are detected.
+# ==============================================================================
 # Fails if source or built binaries mention analytics/crash-reporting SDKs, or if Package files declare dependencies.
 # Usage: scripts/check_no_telemetry.sh [extra binary or dir ...]
 # Safety settings: stop on errors, treat unset variables as errors, and fail pipelines if any part fails.

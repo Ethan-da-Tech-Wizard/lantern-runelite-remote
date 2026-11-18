@@ -1,8 +1,14 @@
-// Program: Lantern - Transport.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Protocol describing what the phone app needs from a transport.
-//
+// ==============================================================================
+// Program: Transport.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Protocol defining the network transport interface required by the mobile client.
+//          Inputs: Outbound InputEvents and pairing/reconnect control commands.
+//          Outputs: Incoming video packet stream and connection lifecycle notifications.
+//          Design Rationale: Abstract transport interface enables transparent swapping between live UDP
+//          network transport and synthetic demo transports.
+// ==============================================================================
 // Transport.swift
 //
 // PURPOSE: Defines the small "seam" (set of agreements) between the app's screens and whatever

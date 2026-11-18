@@ -1,8 +1,13 @@
-// Program: Lantern - HostKitTests.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Tests window geometry, input planning and the injector rules.
-//
+// ==============================================================================
+// Program: HostKitTests.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Integration tests for window geometry calculations, input planning, and injector filtering.
+//          Inputs: Simulated phone touches, window coordinate frames, and input plans.
+//          Outputs: Assertions validating generated CGEvent descriptors and rate limit enforcements.
+//          Design Rationale: Confirms end-to-end correctness of host input translation pipeline.
+// ==============================================================================
 // Area protected: the host side of the app (LanternHostKit). It covers window geometry
 // (mapping 0 to 1 coordinates to screen points), the input injector's safety rules (only act
 // when the target window is in front, focused, not covered, and the point is inside; rate

@@ -1,9 +1,15 @@
 #!/bin/bash
-# Program: Lantern - bootstrap.sh
-# Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-# Last Modified: 2026-11-18
-# Purpose: One-command setup check, build and test for a fresh Mac.
-#
+# ==============================================================================
+# Program: bootstrap.sh
+# Programmer: Ethan-da-Tech-Wizard
+# Course: CIS 156 / Advanced Systems
+# Last Modified: November 18, 2026
+# Purpose: One-command setup verification, build preflight, and compilation script for macOS.
+#          Inputs: Local environment checks (Xcode tools, Swift version, macOS permissions).
+#          Outputs: Build status logs and compiled Lantern binaries in .build directory.
+#          Design Rationale: Safe bootstrap script that never uses sudo, never modifies system directories,
+#          and verifies dependencies before building.
+# ==============================================================================
 # One-command setup check + build for a fresh Mac. Read-only preflight, then build and test.
 # NEVER installs anything, never uses sudo, never pipes downloads into a shell.
 # Env: LANTERN_SCRATCH = build scratch dir (default ./.build under the project)

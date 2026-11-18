@@ -1,15 +1,28 @@
-// Program: Lantern - InputInjector.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Turns phone input into real Mac mouse and keyboard events, only after strict window, focus and cover checks.
-//
+// ==============================================================================
+// Program: InputInjector.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Simulated mouse and keyboard event synthesis using macOS CoreGraphics event taps.
+//          Inputs: Normalized InputEvents from authenticated client.
+//          Outputs: Synthesized CGEvent mouse moves, clicks, scrolls, and key presses dispatched to target window.
+//          Design Rationale: Asserts target window focus and visibility before dispatching input; bounds-checks
+//          coordinates to prevent input escaping to other applications.
+// ==============================================================================
 // InputInjector.swift - turns phone touches/keys into real mouse/keyboard events on the Mac, but only after
 // many safety checks pass.
 // Who calls it: HostSession (serving) and lantern-host's inject-test.
-// Key ideas for beginners: 'Accessibility' is a macOS permission that lets a program watch windows and post
-// events. 'Focus' = which window receives keystrokes; 'frontmost' = which app is in front; 'occluded' = another
-// window covers the spot. The injector refuses (throws) instead of guessing. It acts on ONE target window
-// and never on others. Protocols (WindowEnvironment, ActionSink) let tests run without touching the screen.
+// RuneLite Remote Streaming Input Safety & Hardware Injection Pipeline:
+//   - Accessibility Permissions: macOS requires explicit user granting of Accessibility permissions
+//     to create and post CGEvents to the window server via `CGEventPostToPid`.
+//   - Window Isolation & Frontmost Guarantee:
+//     * Injects events strictly targeting the designated RuneLite PID.
+//     * Auto-focus brings RuneLite frontmost if configured; otherwise drops input if RuneLite is not frontmost.
+//     * Occlusion Detection: Verifies that no overlapping dialog, terminal, or system window covers the target coordinate.
+//   - Coordinate Validation: Coordinates outside the client window frame are strictly dropped to prevent mouse escape.
+//   - Rate Limiting & Fail-Safe Kill Switch:
+//     * Rate-limits input event frequency via HostInputGate to prevent script-driven macro speeds.
+//     * Auto-releases held mouse buttons and keys on disconnect, window occlusion, or process termination.
 
 // ApplicationServices: the Accessibility API (AXUIElement...), which lets a program ask which window has focus and requires the user's Accessibility permission.
 import ApplicationServices

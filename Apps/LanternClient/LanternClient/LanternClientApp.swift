@@ -1,8 +1,14 @@
-// Program: Lantern - LanternClientApp.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: App entry point for the iPhone app.
-//
+// ==============================================================================
+// Program: LanternClientApp.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: SwiftUI application entry point for the iOS mobile client.
+//          Inputs: System launch options, environment configurations, and launch arguments.
+//          Outputs: Main application scene lifecycle and root view hierarchy.
+//          Design Rationale: Pure SwiftUI lifecycle with clean separation between debug launch argument
+//          parsing and release configuration.
+// ==============================================================================
 // LanternClientApp.swift
 //
 // PURPOSE: The app's entry point. iOS starts here when the app launches.

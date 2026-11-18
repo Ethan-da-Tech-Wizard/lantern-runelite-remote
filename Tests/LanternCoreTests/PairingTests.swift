@@ -1,8 +1,13 @@
-// Program: Lantern - PairingTests.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Tests pairing codes, policy and key storage.
-//
+// ==============================================================================
+// Program: PairingTests.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Tests for pairing code generation, parsing, rate-limiting, and key storage.
+//          Inputs: Ephemeral pairing tokens, mock Keychain stores, and pairing requests.
+//          Outputs: Assertions validating correct key persistence and authorization outcomes.
+//          Design Rationale: Prevents regressions in pairing security policy and credential storage.
+// ==============================================================================
 // Area protected: pairing and key storage in LanternCore. It covers the pairing code
 // (format, randomness, parsing), the QR payload, constant-time comparison, the pairing
 // policy (expiry, single use, lockout after repeated failures, QR secrets), the key stores

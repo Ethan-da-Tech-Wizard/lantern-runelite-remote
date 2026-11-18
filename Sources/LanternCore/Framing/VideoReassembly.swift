@@ -1,8 +1,14 @@
-// Program: Lantern - VideoReassembly.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Puts fragmented video frames back together on the phone and detects lost frames.
-//
+// ==============================================================================
+// Program: VideoReassembly.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Reassembles fragmented video frames from MTU-sized UDP datagrams on the client.
+//          Inputs: Inbound fragmented video chunks tagged with frame index and slice offsets.
+//          Outputs: Fully reassembled H.264 Annex-B access units delivered to the video decoder.
+//          Design Rationale: UDP datagrams are restricted to MTU (< 1400 bytes) to prevent IP fragmentation;
+//          drops incomplete stale frames to favor real-time latency over delayed retransmission.
+// ==============================================================================
 // =====================================================================================
 // VideoReassembly.swift
 //
@@ -16,13 +22,17 @@
 //   The phone's receiver feeds every arriving `VideoFragment` to `VideoReassembler.ingest`
 //   and sends a keyframe request (REQUEST_IDR) when `takeKeyframeRequest` says so.
 //
-// KEY IDEAS (in plain English)
-//   - A frame is bigger than one network packet (about 1200 bytes max), so it is split up.
-//   - ANNEX-B is the byte format of H.264 video units; we treat it as opaque bytes here.
-//   - If any piece is lost, the frame is useless, and later frames may depend on it. So the
-//     receiver asks for a KEYFRAME (a complete picture) to recover.
-//   - Frame IDs are 32-bit and wrap around; comparisons use "serial number arithmetic" so the
-//     wrap does not break ordering.
+// KEY IDEAS (Video Pipeline & Reassembly Architecture):
+//   - Video Pipeline Comparison:
+//     * WebRTC Video Pipeline: Relies on RTP packetization (RFC 6184) and RTCP NACK/PLI/FIR feedback loops.
+//       This involves jitter buffer queues that trade 50-100ms latency to handle packet retransmissions.
+//     * MJPEG Video Pipeline: Streams full JPEG files over TCP/HTTP multipart. Does not require custom
+//       reassembly logic, but causes severe head-of-line blocking and network latency spikes.
+//     * Lantern Low-Latency UDP Reassembly Pipeline: Splits H.264 Annex-B frames into MTU-safe fragments
+//       (< 1200 bytes). If a packet is lost, the partial frame is immediately discarded rather than waiting
+//       for retransmission. The receiver fires an instant REQUEST_IDR, triggering the encoder to emit a fresh
+//       keyframe, regaining synchronization with minimum latency.
+//   - Frame IDs are 32-bit and wrap around; comparisons use serial number arithmetic.
 // =====================================================================================
 
 import Foundation

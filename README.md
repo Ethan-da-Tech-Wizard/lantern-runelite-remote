@@ -1,6 +1,7 @@
 # Lantern: see and play your own RuneLite window on your iPhone
 
-> ## ⚠️ Status: awaiting Jagex's reply. Please do NOT download, build or use this yet.
+> [!IMPORTANT]
+> ### ⚠️ AWAITING JAGEX APPROVAL — PLEASE DO NOT DOWNLOAD OR USE YET
 > This project is shared only so Jagex can read exactly what it does. It has not been approved. Until Jagex
 > replies, treat this as read-only. Do not run it, and do not use it with any game account.
 

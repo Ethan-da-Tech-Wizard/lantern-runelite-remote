@@ -1,8 +1,14 @@
-// Program: Lantern - WindowLister.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Lists the windows macOS currently has (title, owner, size, layer).
-//
+// ==============================================================================
+// Program: WindowLister.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: macOS window enumeration filtering for RuneLite application instances.
+//          Inputs: System window server query parameters.
+//          Outputs: Array of eligible window descriptors (window ID, process name, title, bounds).
+//          Design Rationale: Automatically identifies active RuneLite game windows while filtering out
+//          login screens, dialogs, and non-game windows.
+// ==============================================================================
 // WindowLister.swift - asks macOS which windows exist (title, owner, size, layer).
 // Who calls it: WindowCapturer.listWindows, InputInjector's SystemWindowEnvironment (frame lookups,
 // "what window is on top at this point?"), and lantern-host.

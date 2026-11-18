@@ -1,8 +1,13 @@
-// Program: Lantern - FramingTests.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Tests the wire format and delivery rules.
-//
+// ==============================================================================
+// Program: FramingTests.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Unit tests verifying WireMessage and ChannelMessage serialization and deserialization.
+//          Inputs: Sample messages, corrupted packet buffers, and truncated byte streams.
+//          Outputs: Validation that valid messages roundtrip intact and invalid packets are rejected.
+//          Design Rationale: Ensures protocol wire stability and parser robustness against malformed datagrams.
+// ==============================================================================
 // Area protected: the wire format and delivery rules in LanternCore. It covers the outer
 // frame codec (encode and decode with strict size checks), the inner channel messages (video,
 // control, input), coordinate clamping, a random-input crash check, the replay window,

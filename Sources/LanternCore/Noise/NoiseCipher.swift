@@ -1,8 +1,14 @@
-// Program: Lantern - NoiseCipher.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Noise protocol cipher layer: ChaCha20-Poly1305 encryption with nonces and a replay window.
-//
+// ==============================================================================
+// Program: NoiseCipher.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Noise protocol cipher layer wrapping ChaCha20-Poly1305 authenticated encryption.
+//          Inputs: Plaintext bytes, 32-byte symmetric key, 64-bit nonce, and optional authentication data.
+//          Outputs: Authenticated ciphertext with 16-byte Poly1305 tag.
+//          Design Rationale: ChaCha20-Poly1305 offers constant-time operation in software without
+//          hardware AES acceleration dependencies.
+// ==============================================================================
 // =====================================================================================
 // NoiseCipher.swift
 //

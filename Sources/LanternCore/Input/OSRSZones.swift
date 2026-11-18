@@ -1,8 +1,14 @@
-// Program: Lantern - OSRSZones.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Decides whether a touch lands on the 3D game world (camera drag) or on an interface panel (normal drag) in the Fixed Classic layout.
-//
+// ==============================================================================
+// Program: OSRSZones.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Classifies touch coordinates into 3D game world vs 2D UI panels in OSRS Fixed Classic layout.
+//          Inputs: Normalized touch coordinates (x, y) relative to the RuneLite game window.
+//          Outputs: Zone classification enum (gameWorld, minimap, inventory, chatBox).
+//          Design Rationale: Translates 1-finger drag in the 3D world to middle-mouse camera rotation
+//          while preserving standard left/right mouse drag interactions across interface panels.
+// ==============================================================================
 // =====================================================================================
 // OSRSZones.swift
 //

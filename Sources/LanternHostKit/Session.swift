@@ -1,8 +1,14 @@
-// Program: Lantern - Session.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Glue for one host session: connects video capture, the network server and input injection.
-//
+// ==============================================================================
+// Program: Session.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Host session orchestrator integrating window capture, video encoding, network, and input.
+//          Inputs: Selected window ID, network port, and configuration options.
+//          Outputs: Active remote streaming session lifecycle management.
+//          Design Rationale: Acts as composition root on the host, ensuring clean teardown of capture
+//          sessions and network sockets on shutdown.
+// ==============================================================================
 // Session.swift - HostSession, the glue between video, network and input.
 // Who calls it: lantern-host's serve command creates one and calls shutdown() on Ctrl-C.
 // Key ideas: capture runs ONLY while a client is connected; input from the phone is applied on its own

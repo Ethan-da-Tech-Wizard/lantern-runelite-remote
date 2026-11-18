@@ -1,8 +1,14 @@
-// Program: Lantern - SessionSource.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Video source abstraction and the real window-capture-plus-encoder source.
-//
+// ==============================================================================
+// Program: SessionSource.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Abstraction protocol and implementations for video frame acquisition sources.
+//          Inputs: Captured window frames or simulated test frames.
+//          Outputs: Continuous stream of pixel buffers fed into the video encoder.
+//          Design Rationale: Enables seamless substitution between live ScreenCaptureKit window capture
+//          and synthetic test generators.
+// ==============================================================================
 // SessionSource.swift - the "where does video come from?" abstraction (FrameSource) and its real
 // implementation (WindowFrameSource = one window captured then H.264 encoded).
 // Who calls it: HostSession (starts/stops it when a client connects/leaves) and lantern-host serve.

@@ -1,8 +1,13 @@
-// Program: Lantern - NoiseTests.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Tests the Noise handshake and encryption.
-//
+// ==============================================================================
+// Program: NoiseTests.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Cryptographic verification suite for Noise handshakes (XXpsk3 and IK) and ChaCha20-Poly1305 encryption.
+//          Inputs: Test vectors, ephemeral key pairs, and handshake token exchanges.
+//          Outputs: Cryptographic proof of mutual authentication and matching symmetric cipher keys.
+//          Design Rationale: Validates strict adherence to Noise Protocol specifications to guarantee session confidentiality.
+// ==============================================================================
 // Area protected: the Noise handshake and transport encryption in LanternCore. It checks
 // the code against published known-answer test vectors, normal handshake round trips for both
 // patterns, many failure cases (wrong key, tampering, wrong prologue, bad order, bad config),

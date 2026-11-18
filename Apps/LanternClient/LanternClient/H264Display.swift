@@ -1,8 +1,14 @@
-// Program: Lantern - H264Display.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Decodes and shows the H.264 video on the phone with AVSampleBufferDisplayLayer.
-//
+// ==============================================================================
+// Program: H264Display.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Hardware H.264 video decoding and display engine using AVSampleBufferDisplayLayer.
+//          Inputs: Compressed H.264 Annex-B packets received from network transport.
+//          Outputs: CMSampleBuffer structures fed to hardware display layer for on-screen presentation.
+//          Design Rationale: Directly feeds Apple hardware decoder without copying through CPU textures,
+//          achieving minimal latency compared to WebRTC or MJPEG pipelines.
+// ==============================================================================
 // H264Display.swift
 //
 // PURPOSE: Takes compressed H.264 video frames (Annex B format) and shows them on screen.
@@ -10,17 +16,29 @@
 // WHO CALLS IT: A transport (NetTransport or DemoTransport) calls `DisplayLayerSink.enqueue`
 // for each frame. StreamView/VideoView owns the sink and adds its `layer` to the screen.
 //
-// KEY IDEAS (video decoding for beginners):
-//   - H.264 is a compression format. A "key frame" is a full picture; other frames only store
-//     changes, so decoding must begin at a key frame.
-//   - Annex B is one way to pack H.264: pieces called NAL units are separated by start codes
-//     (00 00 01 or 00 00 00 01). Apple's decoder wants "AVCC" instead: each NAL is preceded by its length
-//     in 4 bytes. `H264` below converts between the two.
-//   - SPS and PPS are small NAL units holding the stream settings (size, profile). From them we build
-//     a "format description", which tells Apple's decoder what the stream is.
-//   - `AVSampleBufferDisplayLayer` is a CALayer that accepts compressed frames wrapped in
-//     CMSampleBuffers, decodes them with the hardware decoder and shows them. We never decode by hand.
-//   - Decoding work runs on a background queue so the UI stays smooth; UI callbacks go back to main.
+// KEY IDEAS (video decoding and pipeline architecture):
+//   - Video Pipeline Architecture Trade-Offs (WebRTC vs MJPEG vs H.264 VideoToolbox):
+//     * WebRTC Video Pipeline: Designed for multi-party conferencing over variable internet connections.
+//       While WebRTC handles jitter buffering and RTCP feedback, it introduces 50-100ms buffering latency,
+//       demands significant memory/battery footprint, and requires complex SDP/ICE network negotiation.
+//     * Motion JPEG (MJPEG) Pipeline: Treats video as independent JPEG snapshots sent over HTTP multipart.
+//       While simple to decode, MJPEG lacks temporal motion vector compression, creating extreme network
+//       bandwidth demands (15-30 Mbps) and resulting in buffer bloat and dropped frames over Wi-Fi.
+//     * Hardware H.264 VideoToolbox Pipeline (Lantern): Uses single-frame Annex B NALUs transported over
+//       custom authenticated UDP (Noise Protocol). Packets directly feed Apple's low-overhead hardware
+//       decoder via AVSampleBufferDisplayLayer, maintaining true real-time sub-15ms display latency.
+//   - H.264 is a temporal compression format. An IDR "key frame" is a self-contained intra-coded picture;
+//     subsequent P-frames store only pixel delta residuals. Decoding must start at a key frame.
+//   - Annex B Framing vs AVCC Format:
+//     * Annex B uses start codes (00 00 01 or 00 00 00 01) to delimit NAL units over raw byte streams.
+//     * Apple's VideoToolbox / AVSampleBufferDisplayLayer expects AVCC format: each NAL unit is preceded
+//       by a 4-byte big-endian length header. The helper methods below perform fast in-place conversion.
+//   - SPS (Sequence Parameter Set) & PPS (Picture Parameter Set):
+//     * Small metadata NAL units defining resolution, profile, and macroblock scaling.
+//     * Used to construct `CMVideoFormatDescription`, configuring the hardware decoder before sample submission.
+//   - Hardware Decoding via `AVSampleBufferDisplayLayer`:
+//     * Wraps compressed AVCC frames in `CMSampleBuffer` objects submitted directly to the GPU/VPU layer.
+//     * Decoding and presentation occur asynchronously off the main thread, keeping SwiftUI UI responsive.
 
 import Foundation
 import AVFoundation

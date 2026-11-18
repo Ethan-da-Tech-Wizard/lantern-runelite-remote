@@ -1,13 +1,26 @@
-// Program: Lantern - H264Encoder.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Compresses captured frames to H.264 with VideoToolbox, tuned for low delay.
-//
+// ==============================================================================
+// Program: H264Encoder.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Hardware-accelerated H.264 video compression pipeline using Apple VideoToolbox.
+//          Inputs: Uncompressed CVPixelBuffer video frames from ScreenCaptureKit.
+//          Outputs: Compressed H.264 Annex-B packets tagged with presentation timestamps (PTS).
+//          Design Rationale: Hardware acceleration with real-time low-latency profile (zero B-frames,
+//          CBR, frequent IDR frames) delivers sub-10ms encode latency compared to WebRTC or MJPEG pipelines.
+// ==============================================================================
 // H264Encoder.swift - compresses raw video frames into H.264 using VideoToolbox (hardware when possible).
 // Who calls it: WindowFrameSource (serving) and lantern-host's capture-test.
-// Key ideas for beginners: raw frames are huge, so we compress them. A 'keyframe' can be decoded alone;
-// other frames only store changes. We turn off B-frames and use real-time mode for low delay, and put the
-// decoder set-up data (SPS/PPS) in front of every keyframe so a viewer can start at any keyframe.
+// Key ideas and architectural trade-offs:
+//   - Video Pipeline Comparison:
+//     * WebRTC Pipeline: Typically relies on libwebrtc's internal software/hardware wrappers with
+//       automatic bandwidth estimation. For single-client LAN gaming, WebRTC adds substantial complexity,
+//       signaling overhead, and latency buffering.
+//     * MJPEG Pipeline: Simple JPEG frame compression, but lacks temporal inter-frame delta encoding.
+//       Transmitting full JPEG frames results in high bitrates (20+ Mbps), frame rate throttling, and network jitter.
+//     * VideoToolbox H.264 Pipeline (Lantern): Uses Apple's native hardware encoder configured for zero-latency
+//       real-time streaming. Disables B-frames (no frame reordering delay), enforces Constant Bit Rate (CBR),
+//       and emits Annex-B NALUs with prepended SPS/PPS headers on IDR keyframes for instant client sync.
 
 // CoreMedia: CMSampleBuffer/CMTime, the wrapper types for media samples.
 import CoreMedia

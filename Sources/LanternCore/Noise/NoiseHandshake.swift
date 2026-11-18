@@ -1,8 +1,14 @@
-// Program: Lantern - NoiseHandshake.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Noise handshakes (XXpsk3 for pairing, IK for reconnecting) that establish the shared encryption keys.
-//
+// ==============================================================================
+// Program: NoiseHandshake.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Implements Noise Protocol handshakes (Noise_XXpsk3 for pairing, Noise_IK for reconnect).
+//          Inputs: Handshake message tokens, Curve25519 static/ephemeral keys, and pre-shared keys.
+//          Outputs: Mutual authentication, ephemeral session key exchange, and verified public identities.
+//          Design Rationale: Provides mutual authentication, forward secrecy, and identity hiding
+//          without requiring an external certificate authority or PKI.
+// ==============================================================================
 // =====================================================================================
 // NoiseHandshake.swift
 //

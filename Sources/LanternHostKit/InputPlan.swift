@@ -1,12 +1,28 @@
-// Program: Lantern - InputPlan.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Plans which mouse or keyboard actions each phone event means for the captured window.
-//
+// ==============================================================================
+// Program: InputPlan.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Translates high-level phone gesture events into discrete macOS mouse/keyboard action plans.
+//          Inputs: Phone input actions (tap, long press, two-finger pan, drag).
+//          Outputs: Coordinate-transformed mouse down, move, and up sequence plans.
+//          Design Rationale: Decouples high-level input semantics from low-level OS event generation,
+//          facilitating unit testing of input logic.
+// ==============================================================================
 // InputPlan.swift - decides WHAT mouse/keyboard actions an incoming phone event means.
 // Who calls it: InputInjector.apply (real use) and lantern-host's inject-test dry run.
-// Key ideas: an event such as "tap at 0.5, 0.5" is planned into primitive steps (move, press, release)
-// at a real screen point; events with bad coordinates or unsafe text are dropped, never clamped.
+// RuneLite Remote Streaming & Touch Control Logic:
+//   - An incoming phone event (e.g. tap at normalized coordinates 0.5, 0.5) is planned into discrete,
+//     deterministic OS-level actions (mouse move, mouse down, mouse up) targeting the RuneLite game window.
+//   - Touch Control Mapping for RuneLite:
+//     * One-finger tap: plans to move -> leftDown -> leftUp (standard primary click).
+//     * Two-finger tap / long-press: plans to move -> rightDown -> rightUp (OSRS right-click context menu).
+//     * One-finger drag in 3D viewport: plans to move -> otherDown -> otherDrag -> otherUp (middle-mouse camera orbit).
+//     * Two-finger drag: plans to move -> leftDown -> leftDrag -> leftUp (drag items / inventory interaction).
+//     * Pinch gesture: plans to scroll(dx: 0, dy: pixels) (scroll-wheel viewport zoom in/out).
+//   - Strict Safety Rules:
+//     * Out-of-bounds coordinates (< 0.0 or > 1.0) are completely dropped, never clamped, preventing input drift.
+//     * Keystroke length is strictly limited to prevent buffer overflow attacks.
 
 // CoreGraphics: CGPoint/CGRect for screen positions.
 import CoreGraphics

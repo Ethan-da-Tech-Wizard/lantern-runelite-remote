@@ -1,8 +1,14 @@
-// Program: Lantern - AnnexB.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Converts H.264 data between the AVCC and Annex B formats.
-//
+// ==============================================================================
+// Program: AnnexB.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: H.264 Annex B byte stream format utilities and NAL unit start-code delimiter parsers.
+//          Inputs: Raw H.264 elementary streams or AVCC length-prefixed blocks.
+//          Outputs: Formatted Annex B NAL units with 3-byte and 4-byte start code prefixes.
+//          Design Rationale: Annex B framing allows streaming video decoders to regain frame
+//          synchronization after packet drops without separate transport framing.
+// ==============================================================================
 // AnnexB.swift - converts H.264 NAL units between two framings (length-prefixed AVCC and start-code Annex B).
 // Who calls it: H264Encoder (turns the encoder's output into the stream we send); tests also use nalUnits.
 // Key ideas: pure functions with no system calls, so they are easy to test; malformed input returns nil.

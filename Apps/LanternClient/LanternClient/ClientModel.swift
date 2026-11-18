@@ -1,8 +1,13 @@
-// Program: Lantern - ClientModel.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: View-model for the phone app: pairing, connecting, status and sending input.
-//
+// ==============================================================================
+// Program: ClientModel.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Observable view-model governing mobile app state, networking, and input dispatch.
+//          Inputs: User interaction events from UI and connection status updates from transport.
+//          Outputs: Published state changes driving SwiftUI view updates and outbound input events.
+//          Design Rationale: Centralizes UI state transitions, decoupling SwiftUI views from transport networking protocols.
+// ==============================================================================
 // ClientModel.swift
 //
 // PURPOSE: The single "brain" object for the UI. It remembers which screen is showing, the

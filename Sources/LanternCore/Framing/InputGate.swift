@@ -1,8 +1,14 @@
-// Program: Lantern - InputGate.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Host-side rate limiting, held-button tracking and staleness checks that every incoming input event must pass.
-//
+// ==============================================================================
+// Program: InputGate.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Host-side rate limiting, held-button tracking, and staleness safety validation for input.
+//          Inputs: Inbound InputEvents received from remote client over network.
+//          Outputs: Validated and sanitized InputEvents approved for hardware injection.
+//          Design Rationale: Rate-limits clicks and movements to human-plausible thresholds, preventing
+//          bot-like bursts and ensuring held mouse buttons/keys are cleanly auto-released on disconnect.
+// ==============================================================================
 // =====================================================================================
 // InputGate.swift
 //

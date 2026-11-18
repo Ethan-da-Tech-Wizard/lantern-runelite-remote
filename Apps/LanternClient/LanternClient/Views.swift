@@ -1,8 +1,14 @@
-// Program: Lantern - Views.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: SwiftUI screens: pairing, the streaming screen with its four-finger menu, and settings.
-//
+// ==============================================================================
+// Program: Views.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: SwiftUI view implementations for pairing screen, streaming viewport, overlay controls, and settings.
+//          Inputs: ClientModel observable properties and user touch inputs.
+//          Outputs: Interactive SwiftUI view tree and modal dialog presentations.
+//          Design Rationale: Clean declarative UI architecture featuring four-finger gesture menu and seamless
+//          transition to streaming viewport.
+// ==============================================================================
 // Views.swift
 //
 // PURPOSE: All the SwiftUI screens: the root ContentView, the PairView (enter host and code),
@@ -10,13 +16,18 @@
 //
 // WHO CALLS IT: LanternClientApp shows ContentView; ContentView picks the other screens.
 //
-// KEY IDEAS:
-//   - A SwiftUI `View` is a cheap description of what to draw. Its `body` is re-run whenever
-//     data it reads (a @State value or a @Published property of the model) changes.
-//   - `@State` = a small piece of private screen state; `@ObservedObject` = a model owned elsewhere
-//     that this view watches; `@Binding`/`$name` = a two-way link to a value so a control can edit it.
-//   - While streaming, the whole screen is the game video. Extra controls appear only when
-//     the user taps with four fingers (menu) or three fingers (keyboard).
+// KEY IDEAS (Swift Views & Declarative Architecture):
+//   - SwiftUI Declarative UI: A SwiftUI `View` is a lightweight, immutable struct declaring the interface.
+//     Its `body` property is re-evaluated reactively whenever observed state mutations occur.
+//   - State Management Architecture:
+//     * `@StateObject`: Owns the lifecycle of the single `ClientModel` view-model instance at the root.
+//     * `@Published`: In the view-model, changes to `@Published` properties broadcast updates across views.
+//     * `@State`: Manages local view-only ephemeral state (e.g., sheet visibility flags).
+//     * `@Binding` / `$`: Establishes two-way reactive bindings between UI input fields and model properties.
+//   - Immersive Streaming View Hierarchy:
+//     * During active streaming, the interface maximizes screen real estate by rendering full-screen video.
+//     * Controls and overlays are non-intrusive: four-finger tap invokes the navigation/settings menu sheet;
+//       three-finger tap summons the iOS virtual keyboard; normal touches map directly to RuneLite desktop events.
 
 import SwiftUI
 

@@ -1,8 +1,14 @@
-// Program: Lantern - HostServer.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Mac-side UDP server: accepts pairing and reconnect handshakes, runs the live session, sends video and receives input.
-//
+// ==============================================================================
+// Program: HostServer.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: macOS-side UDP server accepting pairing handshakes, managing sessions, and streaming video.
+//          Inputs: Inbound UDP datagrams from local network clients.
+//          Outputs: Outbound H.264 video fragments and received input events forwarded to the injector.
+//          Design Rationale: Single-client binding ensures only one paired phone can control the game session
+//          at a time, preventing remote session hijacking.
+// ==============================================================================
 // =====================================================================================
 // HostServer.swift
 //
@@ -14,16 +20,22 @@
 // beginPairing / sendVideoFrame / send(control:) and sets the on... callbacks. ClientConnection
 // (the other end) talks to it over the network.
 //
-// KEY IDEAS FOR A BEGINNER:
-//  - UDP: send independent packets with no connection. Network.framework's NWListener hands us an
-//    NWConnection per remote sender (address + port), which is how we tell senders apart.
-//  - Concurrency: ALL mutable state lives on one serial dispatch queue `q` (one task at a time),
-//    so we need no locks for it. Public functions hop onto `q` with q.sync / q.async.
-//  - Pairing (Noise XX with a pre-shared key): both sides prove they know the pairing code and
-//    swap public keys; the host saves the new device's key. Later reconnects use Noise IK, where the
-//    client already knows the host key and the host already knows the client key.
-//  - Defences: handshake rate limits, a cap on half-finished handshakes, silent drops for
-//    unknown senders, anti-replay timestamps, and one client at a time.
+// KEY IDEAS (RuneLite Remote Streaming & UDP Host Server):
+//  - Remote Streaming Architecture:
+//    * Transmits low-latency H.264 video frames segmented into UDP datagrams to the connected client.
+//    * Ingests remote touch and keyboard input events, performing rate-limiting and authorization checks
+//      before handing them off to the input injection subsystem.
+//  - UDP Network Transport:
+//    * Employs Apple's `Network.framework` `NWListener` configured for UDP datagram reception.
+//    * Avoids TCP latency spikes and connection stalls caused by packet drops on home Wi-Fi networks.
+//  - Concurrency Model:
+//    * ALL mutable state is isolated on a single serial dispatch queue `q`, preventing race conditions without mutexes.
+//  - Cryptographic Session Setup (Noise Protocol):
+//    * Initial pairing uses Noise_XXpsk3 with a 6-digit one-time code, verifying device authenticity.
+//    * Reconnections use Noise_IK with cached Curve25519 static public keys for instantaneous zero-RTT reconnection.
+//  - Defensive Security Guardrails:
+//    * Strict single-client exclusivity: only one authenticated mobile client can control the host at a time.
+//    * Rate limits on handshakes and input events prevent brute-force attacks and bot-like input rates.
 // =====================================================================================
 
 import Foundation

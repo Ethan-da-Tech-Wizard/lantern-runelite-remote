@@ -1,8 +1,13 @@
-// Program: Lantern - WireMessage.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Outer packet format: magic bytes, version, message types and the encrypted data header.
-//
+// ==============================================================================
+// Program: WireMessage.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Defines outer network packet framing with magic bytes, message types, and lengths.
+//          Inputs: Binary datagram buffers received from UDP network sockets.
+//          Outputs: Parsed packet headers and verified payload byte slices.
+//          Design Rationale: 4-byte magic signature prevents cross-protocol confusion and drops spurious traffic.
+// ==============================================================================
 // =====================================================================================
 // WireMessage.swift
 //
@@ -22,7 +27,11 @@
 //   byte 3   : message type (pairing step, reconnect step, data, reject)
 //   rest     : the type-specific body
 //
-// KEY IDEAS (in plain English)
+// KEY IDEAS (RuneLite Remote Streaming & Wire Framing):
+//   - Low-Latency Remote Protocol vs Standard Stacks:
+//     * Unlike HTTP/WebSocket streaming or WebRTC SCTP data channels, Lantern transmits raw framed UDP
+//       datagrams directly, bypassing TCP head-of-line blocking and kernel connection state overhead.
+//     * Inbound touches and outbound video slices are packed into small, fixed-layout binary datagrams.
 //   - BIG-ENDIAN: multi-byte numbers are written with the most significant byte first.
 //   - BOUNDS CHECKING: the reader refuses to read past the end; it throws an error rather than
 //     crashing, because packets come from the network and cannot be trusted.

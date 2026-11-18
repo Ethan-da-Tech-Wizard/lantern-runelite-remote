@@ -1,8 +1,13 @@
-// Program: Lantern - NetTests.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Tests the real network layer: pairing, sessions and reconnecting.
-//
+// ==============================================================================
+// Program: NetTests.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Integration tests for UDP networking, socket binding, and keepalive management.
+//          Inputs: Loopback network sockets, client and server instances.
+//          Outputs: Verified packet exchange, state transitions, and timeout detections.
+//          Design Rationale: Validates reliable network communication over lossy loopback transport simulators.
+// ==============================================================================
 // Area protected: the real network layer in LanternCore (HostServer, ClientConnection and
 // SecureSession). Tests run over loopback UDP sockets with fast timeouts. They cover: the host
 // being off by default and refusing wildcard binds, full pairing and data flow, QR pairing and

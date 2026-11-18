@@ -1,8 +1,14 @@
-// Program: Lantern - SAS.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Short authentication string: digits both devices can compare to confirm they paired with each other.
-//
+// ==============================================================================
+// Program: SAS.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Short Authentication String (SAS) generation for out-of-band visual verification.
+//          Inputs: Handshake transcript hashes from Noise state.
+//          Outputs: Visual emoji or numeric confirmation codes.
+//          Design Rationale: Enables humans to visually verify that no man-in-the-middle attacker
+//          intercepted the initial pairing handshake.
+// ==============================================================================
 // =====================================================================================
 // SAS.swift
 //

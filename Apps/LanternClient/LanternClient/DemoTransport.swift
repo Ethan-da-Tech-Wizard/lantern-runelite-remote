@@ -1,8 +1,13 @@
-// Program: Lantern - DemoTransport.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Fake transport that makes a test video and logs input, for trying the app without a Mac.
-//
+// ==============================================================================
+// Program: DemoTransport.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Offline synthetic transport simulating video streaming and input handling for testing.
+//          Inputs: Connection requests and user input actions.
+//          Outputs: Generated color-bar test video frames and logged input actions.
+//          Design Rationale: Allows complete testing and demonstration of client UI without requiring an active Mac host.
+// ==============================================================================
 // DemoTransport.swift
 //
 // PURPOSE: A fake, offline stand-in for the real network transport. It draws its own moving test

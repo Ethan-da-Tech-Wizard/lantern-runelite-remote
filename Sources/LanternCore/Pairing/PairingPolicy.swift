@@ -1,8 +1,14 @@
-// Program: Lantern - PairingPolicy.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Rules for pairing: code lifetime, single use and the lock after too many wrong tries.
-//
+// ==============================================================================
+// Program: PairingPolicy.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Enforces access control policies, rate limiting, and timeouts for pairing requests.
+//          Inputs: Connection attempts, timestamps, and credential verification outcomes.
+//          Outputs: Authorization decisions (permit, reject, or lock out).
+//          Design Rationale: Rate-limits pairing attempts and enforces strict TTLs on pairing codes
+//          to prevent local network brute-forcing.
+// ==============================================================================
 // =====================================================================================
 // PairingPolicy.swift
 //

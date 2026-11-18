@@ -1,8 +1,14 @@
-// Program: Lantern - CaptureGuard.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Safety checks before a screen capture: which window, how long and where the output goes.
-//
+// ==============================================================================
+// Program: CaptureGuard.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Pre-capture safety validation and monitoring for screen capture operations.
+//          Inputs: Target window identifiers, process IDs, and bounding rectangles.
+//          Outputs: Validation verdicts ensuring target window belongs exclusively to RuneLite.
+//          Design Rationale: Prevents accidental capture of desktop backgrounds, browser tabs,
+//          or other private windows by validating window ownership.
+// ==============================================================================
 // CaptureGuard.swift - pure safety checks for the capture-test command (which window, how long, where to write).
 // Who calls it: lantern-host's captureTest; also unit tests.
 // Key ideas: recording the screen is sensitive, so the tool demands one exact window, a typed confirmation

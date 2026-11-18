@@ -1,9 +1,14 @@
 #!/bin/bash
-# Program: Lantern - build_ios_sim.sh
-# Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-# Last Modified: 2026-11-18
-# Purpose: Builds the iPhone app for the simulator and optionally runs it.
-#
+# ==============================================================================
+# Program: build_ios_sim.sh
+# Programmer: Ethan-da-Tech-Wizard
+# Course: CIS 156 / Advanced Systems
+# Last Modified: November 18, 2026
+# Purpose: Builds the iOS client application for the iOS Simulator.
+#          Inputs: Simulator destination parameters and build configuration flags.
+#          Outputs: Compiled LanternClient.app bundle installed in target simulator.
+#          Design Rationale: Automates xcodebuild invocations for rapid local client testing without Xcode GUI overhead.
+# ==============================================================================
 # Build LanternClient for the iOS Simulator; with --run, install and launch on a simulator (default iPhone 17).
 # Never touches a real device. Usage: scripts/build_ios_sim.sh [--run] [DerivedDataPath]
 # Safety settings: stop on errors, error on unset variables, fail pipelines when any part fails.

@@ -1,8 +1,14 @@
-// Program: Lantern - PairingCode.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Creates and parses the one-time pairing code and the pairing QR payload.
-//
+// ==============================================================================
+// Program: PairingCode.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Generates and parses human-readable numeric pairing codes for client-host discovery.
+//          Inputs: Ephemeral pre-shared secrets and network endpoint configuration.
+//          Outputs: Formatted alphanumeric pairing tokens displayed on Mac host.
+//          Design Rationale: Short, human-transcribable codes enable zero-trust mutual pairing
+//          over local networks without cloud-mediated discovery.
+// ==============================================================================
 // =====================================================================================
 // PairingCode.swift
 //

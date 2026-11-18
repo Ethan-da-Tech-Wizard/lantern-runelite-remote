@@ -1,8 +1,14 @@
-// Program: Lantern - ClientConnection.swift
-// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
-// Last Modified: 2026-11-18
-// Purpose: Phone-side connection: pairing, reconnecting, keepalives and the encrypted session over UDP.
-//
+// ==============================================================================
+// Program: ClientConnection.swift
+// Programmer: Ethan-da-Tech-Wizard
+// Course: CIS 156 / Advanced Systems
+// Last Modified: November 18, 2026
+// Purpose: Client-side UDP connection state machine managing pairing, Noise handshakes, and transport.
+//          Inputs: Host IP address, port number, pairing credentials, and outbound input events.
+//          Outputs: Encrypted UDP datagram stream and decoded video frames.
+//          Design Rationale: Implements non-blocking asynchronous state machine with heartbeat keepalives
+//          and automatic reconnection upon WiFi roaming.
+// ==============================================================================
 // =====================================================================================
 // ClientConnection.swift
 //
@@ -14,14 +20,16 @@
 // requestKeyframe() and disconnect(), and reads video/state through the callbacks or AsyncStreams.
 // It talks to HostServer (same folder) over the network.
 //
-// KEY IDEAS FOR A BEGINNER:
-//  - UDP has no connection, so we send a handshake packet and re-send it on a timer until the
-//    host answers or we time out.
-//  - A handshake is a short back-and-forth that ends with both sides holding the same secret keys.
-//    `Phase` below records which step we are on.
-//  - Concurrency: all mutable state is touched only on the serial queue `q`. Public methods hop
-//    onto it with q.sync / q.async, so no two pieces of code change the state at the same time.
-//  - async/await: pair() and connect() suspend until the handshake succeeds or fails.
+// KEY IDEAS (RuneLite Client Connection & Network State Machine):
+//  - Remote Streaming Client Pipeline:
+//    * Connects to the Mac host over local Wi-Fi UDP.
+//    * Streams incoming H.264 video fragments into the video reassembler and forwards completed frames to the display layer.
+//    * Transmits touch and keyboard input events over the authenticated ChaCha20-Poly1305 encrypted channel.
+//  - UDP Handshake & Reconnection:
+//    * Since UDP is connectionless, handshake packets are retried on an exponential backoff timer until acknowledged.
+//    * Seamlessly handles IP address changes when the iPhone roams between Wi-Fi access points.
+//  - Concurrency Model:
+//    * All internal session state is serialized on queue `q`, exposing clean async/await Swift concurrency interfaces.
 // =====================================================================================
 
 import Foundation
