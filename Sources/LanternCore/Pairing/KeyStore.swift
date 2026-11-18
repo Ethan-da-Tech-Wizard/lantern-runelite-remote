@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: KeyStore.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Stores local device identity keys and trusted paired peer keys in Keychain or memory.
-//          Inputs: Device keypairs and peer public identity tokens.
-//          Outputs: Securely stored cryptographic keys and lookup queries.
-//          Design Rationale: Uses Apple Keychain Services on iOS/macOS for secure hardware-backed
-//          key protection with memory-only fallbacks for testing.
-// ==============================================================================
+// Program: Lantern - KeyStore.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Stores this device's key and the keys of paired devices (in memory or the Keychain).
+//
 // =====================================================================================
 // KeyStore.swift
 //

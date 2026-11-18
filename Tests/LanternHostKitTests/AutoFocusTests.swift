@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: AutoFocusTests.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Tests window focus assertions and window-cover detection algorithms.
-//          Inputs: Mock window layer hierarchies and occlusion states.
-//          Outputs: Assertions confirming input is suppressed when target window is occluded.
-//          Design Rationale: Verifies safety guardrails preventing input injection into covered or obscured windows.
-// ==============================================================================
+// Program: Lantern - AutoFocusTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests auto-focus and the window-cover check.
+//
 // Area protected: the input injector's focus handling (auto-focus) and the window
 // occlusion check. These tests make sure taps are only injected when the target app is
 // in front (or was successfully brought to the front), and that a full-screen

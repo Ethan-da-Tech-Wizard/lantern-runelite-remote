@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: InputGate.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Host-side rate limiting, held-button tracking, and staleness safety validation for input.
-//          Inputs: Inbound InputEvents received from remote client over network.
-//          Outputs: Validated and sanitized InputEvents approved for hardware injection.
-//          Design Rationale: Rate-limits clicks and movements to human-plausible thresholds, preventing
-//          bot-like bursts and ensuring held mouse buttons/keys are cleanly auto-released on disconnect.
-// ==============================================================================
+// Program: Lantern - InputGate.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Host-side rate limiting, held-button tracking and staleness checks that every incoming input event must pass.
+//
 // =====================================================================================
 // InputGate.swift
 //
@@ -71,7 +65,7 @@ public struct InputRateLimiter: Sendable {
     private var admitted: [UInt64] = []
     /// How many events were dropped so far (for diagnostics).
     public private(set) var droppedCount = 0
-    public init(minSpacingMs: UInt64 = 50, globalMax: Int = 40, globalWindowMs: UInt64 = 1000) {
+    public init(minSpacingMs: UInt64 = 50, globalMax: Int = 80, globalWindowMs: UInt64 = 1000) {
         self.minSpacingMs = minSpacingMs; self.globalMax = globalMax; self.globalWindowMs = globalWindowMs
     }
 
@@ -194,7 +188,7 @@ public struct HostInputGate: Sendable {
     public private(set) var freshness = InputFreshness()
     /// How many events were dropped for being stale.
     public private(set) var staleDropped = 0
-    public init(minSpacingMs: UInt64 = 50, globalMax: Int = 40) {
+    public init(minSpacingMs: UInt64 = 50, globalMax: Int = 80) {
         limiter = InputRateLimiter(minSpacingMs: minSpacingMs, globalMax: globalMax)
     }
 

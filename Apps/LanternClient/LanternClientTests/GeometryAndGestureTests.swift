@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: GeometryAndGestureTests.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Unit tests for touch coordinate normalization, letterboxing calculations, and gesture mapping.
-//          Inputs: Synthetic touch locations, screen bounds, and video aspect ratios.
-//          Outputs: Assertions validating correct coordinate transformations and gesture classifications.
-//          Design Rationale: Ensures precision in touch-to-mouse coordinate conversion across diverse iPhone screen geometries.
-// ==============================================================================
+// Program: Lantern - GeometryAndGestureTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests how touches map onto the video and the gesture rules.
+//
 // Area protected: how touches on the phone map onto the video (VideoGeometry) and how
 // gestures turn into input events (GestureLogic). It checks letterbox math, coordinate
 // normalizing, clamping, and rules like one tap is one event, long press blocks drag,

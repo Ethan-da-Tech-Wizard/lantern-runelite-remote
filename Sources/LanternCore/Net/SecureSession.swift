@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: SecureSession.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Manages active symmetric encryption context, sequence numbering, and keepalive timers.
-//          Inputs: Plaintext packets to send, ciphertext datagrams received.
-//          Outputs: Authenticated ChaCha20-Poly1305 ciphertext and decrypted payloads.
-//          Design Rationale: Rolling sequence counters prevent packet reordering vulnerabilities
-//          and protect session integrity.
-// ==============================================================================
+// Program: Lantern - SecureSession.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: One established encrypted session: sequence numbers, acknowledgements, keepalives and replay protection.
+//
 // =====================================================================================
 // SecureSession.swift
 //

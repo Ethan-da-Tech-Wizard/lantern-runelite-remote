@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: ChannelMessage.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Defines inner encrypted channel message types (video fragments, input events, heartbeats).
-//          Inputs: Typed payload instances (video slices, input events, control packets).
-//          Outputs: Compact binary-encoded channel messages and deserialized typed structures.
-//          Design Rationale: Compact binary packing avoids JSON/text serialization overhead to minimize latency.
-// ==============================================================================
+// Program: Lantern - ChannelMessage.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Defines the messages carried inside the encrypted channel (video, input, control) and how they are encoded and decoded.
+//
 // =====================================================================================
 // ChannelMessage.swift
 //

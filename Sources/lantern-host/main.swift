@@ -1,27 +1,13 @@
-// ==============================================================================
-// Program: main.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Entry point of the lantern-host command-line program on macOS.
-//          Commands: list-windows, capture-test, inject-test, serve.
-//          Inputs: CLI arguments specifying operation mode, window selection, and network options.
-//          Outputs: Low-latency H.264 video stream over encrypted UDP/Noise and processed input injection.
-//          Design Rationale: Host is OFF by default; requires macOS Screen Recording and Accessibility
-//          permissions; features Ctrl-C emergency kill switch releasing all simulated input.
-// ==============================================================================
+// Program: Lantern - main.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Entry point of the lantern-host command-line program on the Mac: list windows, test capture/input, and serve a window to a paired phone.
+//
 // main.swift - entry point of the `lantern-host` command-line program on the Mac.
 // Who calls it: you, from Terminal. Commands: list-windows, capture-test, inject-test, serve.
-// Host Architecture & Streaming Control:
-//   - Safe by Default: The program never launches a server or captures video without explicit command arguments.
-//   - Commands:
-//     * `list-windows`: Queries macOS window server for candidate windows, displaying window IDs, process names, and titles.
-//     * `capture-test`: Validates ScreenCaptureKit capture and VideoToolbox H.264 compression without starting network services.
-//     * `inject-test`: Tests coordinate calculation and CGEvent synthesis; runs as a dry run by default to verify safety.
-//     * `serve`: Initializes `HostSession`, launches UDP listener on a private LAN IP, and manages the authenticated streaming pipeline.
-//   - Signal Handling & Emergency Kill Switch:
-//     * Traps SIGINT (Ctrl-C) and SIGTERM using DispatchSourceSignal.
-//     * Automatically terminates ScreenCaptureKit capture, closes UDP sockets, and releases all simulated keyboard/mouse buttons.
+// Key ideas: the host is OFF by default (running with no command starts nothing). Every command works on a
+// chosen window, requires the macOS permissions it needs (Screen Recording, Accessibility) without prompting,
+// and `serve` stops with Ctrl-C (a kill switch that releases held input and closes the server).
 
 // CoreMedia: sample buffers and pixel-buffer sizes of captured frames.
 import CoreMedia

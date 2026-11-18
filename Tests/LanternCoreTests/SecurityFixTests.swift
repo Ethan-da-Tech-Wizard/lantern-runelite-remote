@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: SecurityFixTests.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Regression tests verifying remediation of historical security vulnerabilities.
-//          Inputs: Targeted attack vectors (replay packets, unauthorized public keys, spoofed frames).
-//          Outputs: Assertions demonstrating that attacks are detected and dropped.
-//          Design Rationale: Ensures critical security defenses cannot be inadvertently undone during refactoring.
-// ==============================================================================
+// Program: Lantern - SecurityFixTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Regression tests for past security fixes.
+//
 // Area protected: regression tests for security fixes in the network layer. Each group
 // guards a past weakness: stale or delayed input must never be injected late (freshness and
 // rate limits), junk or repeated pairing attempts must not lock out the real user or flood the

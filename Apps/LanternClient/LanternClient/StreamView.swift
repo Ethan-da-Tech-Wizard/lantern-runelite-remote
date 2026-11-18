@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: StreamView.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: UIKit-to-SwiftUI bridge hosting the low-latency hardware video display layer and gesture recognizers.
-//          Inputs: Decoded video frames from transport and raw touchscreen gesture recognizer events.
-//          Outputs: Rendered full-screen video layer and normalized InputEvents emitted to view-model.
-//          Design Rationale: Uses UIViewRepresentable to host AVSampleBufferDisplayLayer and UIKit UIGestureRecognizers
-//          for sub-frame touch and render performance.
-// ==============================================================================
+// Program: Lantern - StreamView.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Full-screen video view with gesture, menu and keyboard recognizers.
+//
 // StreamView.swift
 //
 // PURPOSE: Bridges UIKit into SwiftUI. It builds the real UIView that shows the video and catches
@@ -18,23 +12,14 @@
 // `VideoView.sink`; the touch gestures are turned into events by GestureMapper and sent to the model.
 //
 // KEY IDEAS:
-//   - Swift Views & UIKit Bridging: `UIViewRepresentable` lets SwiftUI host an underlying UIKit view.
-//     SwiftUI calls `makeUIView` once to construct it and `updateUIView` whenever state mutates.
-//   - Video Pipeline Comparison (WebRTC vs MJPEG vs H.264/Annex B):
-//     * WebRTC Pipeline: Provides adaptive bitrate and jitter buffering, but brings massive dependency
-//       overhead (libwebrtc), SDP/ICE signaling handshakes, and higher CPU/battery drain on mobile.
-//     * MJPEG Pipeline: Simple HTTP multipart JPEG stream, but lacks inter-frame compression, demanding
-//       10x-20x the bandwidth (15-30 Mbps) and incurring severe frame pacing jitter.
-//     * Lantern's Hardware H.264 over Noise/UDP Pipeline: Streams raw Annex B NAL units directly into Apple's
-//       hardware-accelerated `AVSampleBufferDisplayLayer`. Delivers sub-15ms glass-to-glass latency with
-//       under 2 Mbps bandwidth, zero third-party dependencies, and minimal battery impact.
-//   - Touch Controls & Gesture Mapping:
-//     * Touch events are captured via UIKit UIGestureRecognizers attached to the video view.
-//     * Touches become mouse events on the Mac: finger gesture -> GestureMapper -> InputEvent
-//       (normalized 0.0...1.0 coordinates relative to video aspect rect) -> Noise/UDP -> Mac CoreGraphics injection.
-//     * One-finger tap = left click; two-finger tap / long-press = right click; one-finger drag in 3D viewport =
-//       camera rotation via middle mouse drag; two-finger drag = panning; pinch = scroll-wheel zoom.
-//     * Three-finger tap toggles the virtual keyboard; four-finger tap toggles the client settings menu.
+//   - `UIViewRepresentable` lets SwiftUI host an old-style UIKit view. SwiftUI calls
+//     `makeUIView` once to build it and `updateUIView` each time the SwiftUI state changes.
+//   - A "gesture recognizer" is a UIKit helper object attached to a view. It watches raw finger
+//     touches and decides "that was a tap", "a drag", "a pinch"... then calls a function of ours.
+//   - Touches become mouse events on the Mac like this: finger gesture -> GestureMapper ->
+//     InputEvent (position as 0...1 of the video) -> network -> the Mac replays it as a mouse click or drag.
+//   - Three-finger tap toggles the keyboard; four-finger tap toggles the menu. They use more
+//     fingers than the game gestures (which use one or two) so they are distinct touches.
 
 import SwiftUI
 import UIKit
@@ -55,9 +40,17 @@ final class VideoView: UIView {
     var onMenu: (() -> Void)?
     /// Called when the user taps with three fingers (toggle the keyboard).
     var onKeyboard: (() -> Void)?
+    /// Keyboard show/hide observers, removed when this view goes away.
+    var keyboardObservers: [NSObjectProtocol] = []
+    deinit { keyboardObservers.forEach { NotificationCenter.default.removeObserver($0) } }
+    /// Release any held mouse button when this view leaves the screen or the app goes inactive mid-drag.
+    override func willMove(toWindow newWindow: UIWindow?) {
+        if newWindow == nil { mapper.cancelAll() }
+        super.willMove(toWindow: newWindow)
+    }
     // `@objc` makes these callable by UIKit's target/action system (gesture recognizers call them by selector).
     @objc private func keyboardTapped() { onKeyboard?() }
-    @objc private func menuTapped() { onMenu?() }
+    @objc private func menuTapped() { mapper.cancelAll(); onMenu?() }   // never leave a button held when the menu opens
 
     /// Builds the view. `emit` is where every input event is delivered.
     init(emit: @escaping (InputEvent) -> Void) {
@@ -137,6 +130,18 @@ struct StreamView: UIViewRepresentable {
         // Pass the closures along.
         v.onMenu = onMenu
         v.onKeyboard = onKeyboard
+        // Keep the on/off flag in step with the real keyboard, so swiping it away (or iOS hiding it) never leaves the
+        // three-finger toggle one press out of sync.
+        // Only react when OUR hidden text catcher owns the keyboard, so keyboards in other screens (Settings, pairing) are ignored.
+        let on = _keyboardOn
+        v.keyboardObservers = [
+            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak v] _ in
+                if v?.keys.isFirstResponder == true { on.wrappedValue = true } },
+            NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak v] _ in
+                if v?.keys.isFirstResponder == true { on.wrappedValue = false } },
+            NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: .main) { [weak v] _ in
+                v?.mapper.cancelAll() },
+        ]
         // Give the transport the sink so incoming video frames reach this view's display layer.
         model.transport.videoSink = v.sink
         // Hand the finished view to SwiftUI.

@@ -1,14 +1,9 @@
 #!/bin/bash
-# ==============================================================================
-# Program: print_hashes.sh
-# Programmer: Ethan-da-Tech-Wizard
-# Course: CIS 156 / Advanced Systems
-# Last Modified: November 18, 2026
-# Purpose: Generates SHA-256 cryptographic hashes of all source files for auditing and verification.
-#          Inputs: Project source tree files.
-#          Outputs: Manifest of file paths and their respective SHA-256 checksums.
-#          Design Rationale: Provides verifiable integrity manifests allowing reviewers to audit changes against published baselines.
-# ==============================================================================
+# Program: Lantern - print_hashes.sh
+# Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+# Last Modified: 2026-11-18
+# Purpose: Writes a SHA-256 manifest of the source files so others can compare copies.
+#
 # Write a sha256 manifest of the source tree so a friend can compare. Usage: scripts/print_hashes.sh [outfile]
 # Safety settings: stop on errors, error on unset variables, and fail pipelines when any part fails.
 set -euo pipefail

@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: VirtualDisplayMath.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Geometric calculations for aspect ratios, scaling factors, and letterboxing for virtual displays.
-//          Inputs: Display bounds, window aspect ratios, and device screen dimensions.
-//          Outputs: Fitted viewport rectangles and letterbox offset coordinates.
-//          Design Rationale: Ensures pixel-perfect alignment and prevents distortion when mapping mobile
-//          screen aspects to desktop game viewports.
-// ==============================================================================
+// Program: Lantern - VirtualDisplayMath.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Size and mode calculations and error types for the virtual display.
+//
 // VirtualDisplayMath.swift - pure size/mode calculations and error types for the phone-shaped virtual display.
 // Who calls it: VirtualDisplay.swift (which makes the real display from a spec).
 // Key ideas: a 'virtual display' is a pretend monitor macOS believes exists; validating its size here,

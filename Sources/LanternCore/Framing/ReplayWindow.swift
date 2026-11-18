@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: ReplayWindow.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Sliding-window packet replay protection filter for packet sequence numbers.
-//          Inputs: 64-bit sequence numbers from inbound encrypted datagrams.
-//          Outputs: Boolean acceptance verdict (accept new packet vs drop duplicate/stale packet).
-//          Design Rationale: Constant-time bitmask sliding window guards against UDP packet duplication
-//          and replay attacks with zero heap allocations.
-// ==============================================================================
+// Program: Lantern - ReplayWindow.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Sliding window that rejects duplicated or replayed packets.
+//
 // =====================================================================================
 // ReplayWindow.swift
 //

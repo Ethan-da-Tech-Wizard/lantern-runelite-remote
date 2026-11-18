@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: CaptureGuardTests.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Tests safety pre-checks for window capture operations.
-//          Inputs: Target window descriptors, disallowed process names, and abnormal dimensions.
-//          Outputs: Assertions ensuring capture is blocked for non-whitelisted windows.
-//          Design Rationale: Guarantees user privacy by preventing unintended screen recording.
-// ==============================================================================
+// Program: Lantern - CaptureGuardTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the capture safety checks.
+//
 // Area protected: CaptureGuard, the safety checks that run before a screen capture
 // starts. It must pick exactly one window, require explicit confirmation, limit the
 // recording length, shorten titles, and never overwrite or follow links into

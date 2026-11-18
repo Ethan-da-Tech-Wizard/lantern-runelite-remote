@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: ClientConnection.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Client-side UDP connection state machine managing pairing, Noise handshakes, and transport.
-//          Inputs: Host IP address, port number, pairing credentials, and outbound input events.
-//          Outputs: Encrypted UDP datagram stream and decoded video frames.
-//          Design Rationale: Implements non-blocking asynchronous state machine with heartbeat keepalives
-//          and automatic reconnection upon WiFi roaming.
-// ==============================================================================
+// Program: Lantern - ClientConnection.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Phone-side connection: pairing, reconnecting, keepalives and the encrypted session over UDP.
+//
 // =====================================================================================
 // ClientConnection.swift
 //
@@ -20,16 +14,14 @@
 // requestKeyframe() and disconnect(), and reads video/state through the callbacks or AsyncStreams.
 // It talks to HostServer (same folder) over the network.
 //
-// KEY IDEAS (RuneLite Client Connection & Network State Machine):
-//  - Remote Streaming Client Pipeline:
-//    * Connects to the Mac host over local Wi-Fi UDP.
-//    * Streams incoming H.264 video fragments into the video reassembler and forwards completed frames to the display layer.
-//    * Transmits touch and keyboard input events over the authenticated ChaCha20-Poly1305 encrypted channel.
-//  - UDP Handshake & Reconnection:
-//    * Since UDP is connectionless, handshake packets are retried on an exponential backoff timer until acknowledged.
-//    * Seamlessly handles IP address changes when the iPhone roams between Wi-Fi access points.
-//  - Concurrency Model:
-//    * All internal session state is serialized on queue `q`, exposing clean async/await Swift concurrency interfaces.
+// KEY IDEAS FOR A BEGINNER:
+//  - UDP has no connection, so we send a handshake packet and re-send it on a timer until the
+//    host answers or we time out.
+//  - A handshake is a short back-and-forth that ends with both sides holding the same secret keys.
+//    `Phase` below records which step we are on.
+//  - Concurrency: all mutable state is touched only on the serial queue `q`. Public methods hop
+//    onto it with q.sync / q.async, so no two pieces of code change the state at the same time.
+//  - async/await: pair() and connect() suspend until the handshake succeeds or fails.
 // =====================================================================================
 
 import Foundation
@@ -122,11 +114,12 @@ public final class ClientConnection: @unchecked Sendable {
 
     /// Latest session state (read on the owning queue).
     public var state: SessionState { q.sync { published } }
-    /// Drop counters for finished sessions plus the live session (handshake-phase drops are not included).
+    /// Drop counters for finished sessions, the live session and packets dropped during the handshake.
     public var stats: NetStats {
         q.sync {
-            // Start from the counters of sessions that already ended.
+            // Start from the counters of sessions that already ended, plus handshake-phase drops.
             var s = closedStats
+            s.malformedDrops += handshakeStats.malformedDrops
             // If a session is live, add its counters.
             if case .established(let sess) = phase {
                 s.replayDrops += sess.stats.replayDrops; s.authDrops += sess.stats.authDrops
@@ -201,7 +194,10 @@ public final class ClientConnection: @unchecked Sendable {
                 // Tell the app we are handshaking.
                 self.setState(.handshaking)
                 // Open a UDP connection to the host.
-                let c = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: self.port) ?? .any, using: .udp)
+                // Ask the network stack to treat this as interactive video traffic (a higher Wi-Fi priority class, less queueing delay).
+                let params = NWParameters.udp
+                params.serviceClass = .interactiveVideo
+                let c = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: self.port) ?? .any, using: params)
                 self.conn = c
                 // React to network state changes; ignore ones for an old connection.
                 c.stateUpdateHandler = { [weak self, weak c] st in
@@ -237,6 +233,7 @@ public final class ClientConnection: @unchecked Sendable {
             let d: Data
             // dragEnd is reliable (ACK + retransmit); everything else is sent once.
             if case .dragEnd = e { d = try s.reliable(.input(e), now: clock(), sentMs: stamp) }
+            else if case .camEnd = e { d = try s.reliable(.input(e), now: clock(), sentMs: stamp) }   // a lost camera-end would leave the middle button held
             else { d = try s.unreliable(.input(e), sentMs: stamp) }
             // Store the updated session (a struct is copied) and transmit.
             phase = .established(s); transmit(d, on: c)

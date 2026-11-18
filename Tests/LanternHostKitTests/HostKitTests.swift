@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: HostKitTests.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Integration tests for window geometry calculations, input planning, and injector filtering.
-//          Inputs: Simulated phone touches, window coordinate frames, and input plans.
-//          Outputs: Assertions validating generated CGEvent descriptors and rate limit enforcements.
-//          Design Rationale: Confirms end-to-end correctness of host input translation pipeline.
-// ==============================================================================
+// Program: Lantern - HostKitTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests window geometry, input planning and the injector rules.
+//
 // Area protected: the host side of the app (LanternHostKit). It covers window geometry
 // (mapping 0 to 1 coordinates to screen points), the input injector's safety rules (only act
 // when the target window is in front, focused, not covered, and the point is inside; rate
@@ -494,5 +489,26 @@ final class CameraDragTests: XCTestCase {
         XCTAssertTrue(g.admit(.camMove(x: 0.55, y: 0.5), nowMs: 625))        // 25 ms later: faster than other classes allow
         // Assert: release gives the middle button.
         XCTAssertEqual(g.releaseAll(), [.middle])
+    }
+}
+
+// Area protected: typing support in the host's keyboard sender (CGEventSink.keyInfo).
+final class KeyInfoTests: XCTestCase {
+    // Scenario: ordinary US characters map to real keycodes, with shift for capitals and symbols.
+    // Why it matters: Java (RuneLite) derives the key from the keycode, so "a" must be keycode 0 and "A" must add shift.
+    func testUSCharactersMapToKeycodes() {
+        XCTAssertEqual(CGEventSink.keyInfo("a")?.0, 0)
+        XCTAssertEqual(CGEventSink.keyInfo("A")?.0, 0)
+        XCTAssertEqual(CGEventSink.keyInfo("A")?.1, true)
+        XCTAssertEqual(CGEventSink.keyInfo("!")?.1, true)
+        XCTAssertEqual(CGEventSink.keyInfo("\n")?.0, 36)
+        XCTAssertEqual(CGEventSink.keyInfo("\r\n")?.0, 36)     // Swift treats CR+LF as one Character
+        XCTAssertEqual(CGEventSink.keyInfo("\u{8}")?.0, 51)    // Backspace
+    }
+    // Scenario: characters that are not on a US keyboard are skipped instead of being typed as "a".
+    // Why it matters: keycode 0 is the letter "a", so a fallback would type the wrong letter in the game.
+    func testNonUSCharactersAreSkipped() {
+        XCTAssertNil(CGEventSink.keyInfo("é"))
+        XCTAssertNil(CGEventSink.keyInfo("😀"))
     }
 }

@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: NetTransport.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Production network transport implementation using LanternCore ClientConnection over UDP.
-//          Inputs: User pairing inputs, server host/port, and outbound input events.
-//          Outputs: Live encrypted UDP datagram flow and received H.264 video packets.
-//          Design Rationale: Bridges asynchronous network callbacks from LanternCore to the main-actor UI thread.
-// ==============================================================================
+// Program: Lantern - NetTransport.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Real transport: connects the phone app to the Mac host over the encrypted network layer.
+//
 // NetTransport.swift
 //
 // PURPOSE: The real transport. It adapts LanternCore's ClientConnection (encrypted UDP on the local

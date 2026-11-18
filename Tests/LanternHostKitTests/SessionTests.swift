@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: SessionTests.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: End-to-end integration tests running a full host session over local loopback.
-//          Inputs: Mock video source, host session instance, and simulated network client.
-//          Outputs: Verified video packet delivery and reciprocal input event injection.
-//          Design Rationale: Validates overall subsystem orchestration under realistic operational conditions.
-// ==============================================================================
+// Program: Lantern - SessionTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests a whole host session over a loopback connection.
+//
 // Area protected: HostSession end to end over a real loopback connection. It checks that
 // no capture runs before a client connects, that video frames flow to the client, that one
 // tap becomes exactly one click on the host, and that the kill switch shuts everything down.

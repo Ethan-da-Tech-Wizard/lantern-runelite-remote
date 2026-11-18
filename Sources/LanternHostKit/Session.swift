@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: Session.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Host session orchestrator integrating window capture, video encoding, network, and input.
-//          Inputs: Selected window ID, network port, and configuration options.
-//          Outputs: Active remote streaming session lifecycle management.
-//          Design Rationale: Acts as composition root on the host, ensuring clean teardown of capture
-//          sessions and network sockets on shutdown.
-// ==============================================================================
+// Program: Lantern - Session.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Glue for one host session: connects video capture, the network server and input injection.
+//
 // Session.swift - HostSession, the glue between video, network and input.
 // Who calls it: lantern-host's serve command creates one and calls shutdown() on Ctrl-C.
 // Key ideas: capture runs ONLY while a client is connected; input from the phone is applied on its own
@@ -17,6 +11,7 @@
 
 // Foundation: locks, queues, Task support.
 import Foundation
+import CoreMedia
 // LanternCore: HostServer (network side), InputEvent, control messages.
 import LanternCore
 
@@ -40,8 +35,13 @@ public final class HostSession: @unchecked Sendable {
     // A serial queue runs one input job at a time, in order, on its own thread.
     /// Input is applied on its own serial queue so a slow focus switch (auto-focus can wait up to ~1.6 s) never blocks the network queue.
     private let inputQueue = DispatchQueue(label: "lantern.input", qos: .userInteractive)
+    // Goes up whenever held input is released (disconnect, capture end, kill switch). Queued input jobs remember the
+    // number they were queued under and are skipped if it changed, so nothing queued before a disconnect fires after it.
+    private var inputGen = 0
     // Current tallies.
     private var counters = Counters()
+    // Host-side delay samples in ms (window picture taken -> encoded -> handed to the network), logged as median/p95.
+    private var delaySamples: [Double] = []
     // True while capture is running or starting.
     private var capturing = false
     // A number that goes up each time capture starts or ends; lets a slow start notice it is out of date.
@@ -73,13 +73,38 @@ public final class HostSession: @unchecked Sendable {
     private func log(_ s: String) { onLog?(s) }
 
     // Connects the video source, input, control messages and session state to each other.
+    /// Measures the HOST part of the delay: how long ago the window picture was captured (its timestamp is on the Mac's
+    /// own clock) by the time its encoded frame is handed to the network. Every 150 frames the median and 95th percentile
+    /// are logged. This does NOT include Wi-Fi, the phone's decoding or the screen refresh.
+    private func recordHostDelay(ptsUs: UInt64) {
+        guard ptsUs > 0 else { return }
+        let nowUs = UInt64(max(0, CMTimeGetSeconds(CMClockGetTime(CMClockGetHostTimeClock())) * 1_000_000))
+        guard nowUs >= ptsUs else { return }
+        let ms = Double(nowUs - ptsUs) / 1000
+        var report: String?
+        lock.withLock {
+            delaySamples.append(ms)
+            if delaySamples.count >= 150 {
+                let sorted = delaySamples.sorted()
+                report = String(format: "host delay capture->send over %d frames: median %.1f ms, p95 %.1f ms, max %.1f ms (Wi-Fi and phone not included)",
+                                sorted.count, sorted[sorted.count / 2], sorted[Int(Double(sorted.count) * 0.95)], sorted.last ?? 0)
+                delaySamples.removeAll(keepingCapacity: true)
+            }
+        }
+        if let r = report { log(r) }
+    }
+
     private func wire() {
         // VIDEO: each encoded frame from the source is sent to the connected phone.
         source.onFrame = { [weak self] data, key, pts in
             // If this session object is already gone, do nothing. [weak self] avoids a retain cycle.
             guard let self else { return }
             // Send the frame; if it worked, count it.
-            do { try self.server.sendVideoFrame(data, isKeyframe: key, ptsUs: pts); self.lock.withLock { self.counters.framesSent += 1 } }
+            do {
+                try self.server.sendVideoFrame(data, isKeyframe: key, ptsUs: pts)
+                self.lock.withLock { self.counters.framesSent += 1 }
+                self.recordHostDelay(ptsUs: pts)
+            }
             // Sending fails when no client is connected or it is closing; dropping the frame is intended.
             catch {}   // no client / closing: frame dropped by design
         }
@@ -93,8 +118,11 @@ public final class HostSession: @unchecked Sendable {
         // INPUT: events from the phone are queued onto the input queue so slow work never stalls the network thread.
         server.onInput = { [weak self] e in
             // async = run later on the input queue and return immediately.
+            guard let gen0 = self?.lock.withLock({ self?.inputGen }) else { return }
             self?.inputQueue.async { [weak self] in
                 guard let self else { return }
+                // Skip anything queued before the last disconnect/release: it must never be injected afterwards.
+                if self.lock.withLock({ self.inputGen }) != gen0 { return }
                 // Try to apply the event; the injector throws when a safety rule refuses it.
                 do {
                     // Perform the click/drag/scroll/typing for this one event.
@@ -121,7 +149,7 @@ public final class HostSession: @unchecked Sendable {
             }
         }
         // If the connection dropped while a button was held, let go of it so nothing stays stuck down.
-        server.onHeldButtonsReleased = { [weak self] _ in self?.injector.releaseAll() }
+        server.onHeldButtonsReleased = { [weak self] _ in self?.releaseInputSoon() }
         // SESSION: capture starts when a client is fully connected and stops when it leaves.
         server.onSessionStateChange = { [weak self] st in
             guard let self else { return }
@@ -168,11 +196,18 @@ public final class HostSession: @unchecked Sendable {
     }
 
     // Stops capture (if on). `release` also lets go of held input.
+    /// Cancels every queued input job and releases held buttons WITHOUT blocking the caller (the network queue):
+    /// the release runs on the input queue right after any job that is already in flight.
+    private func releaseInputSoon() {
+        lock.withLock { inputGen += 1 }
+        inputQueue.async { [weak self] in self?.injector.releaseAll() }
+    }
+
     private func endCapture(release: Bool) {
         // Flip capturing off and bump the epoch; remember whether it was on.
         let was: Bool = lock.withLock { let w = capturing; capturing = false; epoch += 1; return w }
         // Release any held buttons right away.
-        if release { injector.releaseAll() }
+        if release { releaseInputSoon() }
         // Stop the source in the background (stop is async).
         if was { Task { [source] in await source.stop() } }
     }
@@ -183,7 +218,8 @@ public final class HostSession: @unchecked Sendable {
         lock.withLock { stopped = true }
         // Immediately cut the network side.
         server.killSwitch()
-        // Let go of held mouse buttons.
+        // Cancel queued input, then let go of held mouse buttons.
+        lock.withLock { inputGen += 1 }
         injector.releaseAll()
         // Mark capture as off.
         let was: Bool = lock.withLock { let w = capturing; capturing = false; epoch += 1; return w }

@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: NetSupport.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Shared networking types, error definitions, connection states, and private address checks.
-//          Inputs: Network interface addresses and IP string representations.
-//          Outputs: Validated socket addresses and private network classification booleans.
-//          Design Rationale: Enforces LAN-only binding (RFC 1918) to guarantee remote gameplay traffic
-//          never routes across the public Internet.
-// ==============================================================================
+// Program: Lantern - NetSupport.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Shared networking pieces: configuration, errors, connection states, key derivation and private-address checks.
+//
 // =====================================================================================
 // NetSupport.swift
 //

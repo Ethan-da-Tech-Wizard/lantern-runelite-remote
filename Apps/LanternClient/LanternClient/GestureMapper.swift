@@ -1,14 +1,8 @@
-// ==============================================================================
-// Program: GestureMapper.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Translates raw iOS touchscreen gestures into RuneLite-compatible input events.
-//          Inputs: UIKit gesture recognizer states (taps, pans, pinches, long presses).
-//          Outputs: Normalized InputEvents (tap, right click, camera rotation, scroll zoom).
-//          Design Rationale: Emulates desktop mouse ergonomics on mobile devices with intuitive touch mapping
-//          and OSRS game zone awareness.
-// ==============================================================================
+// Program: Lantern - GestureMapper.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Turns phone touches into Lantern input events (tap, long-press, drag, camera drag, pinch zoom).
+//
 // GestureMapper.swift
 //
 // PURPOSE: Turns finger gestures on the video view into InputEvents (tap, long-press, drag,
@@ -17,24 +11,20 @@
 // WHO CALLS IT: VideoView (StreamView.swift) owns a GestureMapper and calls `attach(to:)`.
 // Each event is passed to the `emit` closure, which ends up in ClientModel.send.
 //
-// KEY IDEAS (Touch Controls & RuneLite Gesture Mapping):
-//   - Touch Ergonomics on Mobile:
-//     * In traditional desktop RuneLite, gameplay relies on left click (actions/movement), right click (context menus),
-//       middle-click drag (camera orbit), and scroll wheel (zoom).
-//     * GestureMapper maps mobile touch gestures directly into equivalent desktop mouse operations:
-//       1. One-Finger Tap: Emits a standard left mouse click.
-//       2. Long Press / Two-Finger Tap: Emits a right click, opening context menus.
-//       3. One-Finger Drag in 3D World: Emits middle-mouse button drag for intuitive camera panning.
-//       4. One-Finger Drag on UI Widgets (Inventory/Bank/Chat): Emits left mouse drag (e.g. dragging items or scrolling tabs).
-//       5. Two-Finger Drag / Pan: Secondary panning gesture.
-//       6. Two-Finger Pinch: Emits vertical scroll wheel events for zoom in/out.
-//   - Coordinate Normalization & Aspect Ratio:
-//     * Finger positions in UIKit view coordinates are transformed to normalized (0.0 to 1.0) coordinates.
-//     * Letterboxing: Computes aspect-fitted video bounding rectangle within the screen view; touches landing
-//       in letterbox letterbars are safely discarded.
-//   - Architecture:
-//     * `VideoGeometry` and `GestureLogic` are pure mathematical functions independent of UIKit, enabling unit testing.
-//     * `GestureMapper` connects UIKit UIGestureRecognizers to `GestureLogic`, emitting type-safe `InputEvent` structs.
+// KEY IDEAS (for a beginner):
+//   - A "gesture recognizer" (UIKit) is a helper attached to a view. UIKit feeds it the raw
+//     finger touches; when the pattern matches (a quick tap, a finger sliding, two fingers
+//     pinching) it calls one of our functions with a `state` saying how far along it is:
+//     .began (just recognised), .changed (still going), .ended (finger lifted),
+//     .cancelled / .failed (interrupted).
+//   - A finger position is in view points. The Mac needs a position inside the game picture, so
+//     we convert to 0...1 across the video (0,0 = top-left, 1,1 = bottom-right).
+//     The video is shown "letterboxed" (black bars keep its shape), so the bars must be ignored.
+//   - Touches become mouse events: a tap is sent as a click, a long press as a right-click, a
+//     one-finger drag on the game world rotates the camera (middle-button drag), and a drag
+//     that starts on an interface widget is a plain left-button drag.
+//   - The code is split in two: `VideoGeometry` and `GestureLogic` are plain math/rules that do not
+//     touch UIKit (easy to test); `GestureMapper` is the thin UIKit layer wiring recognizers to them.
 
 import UIKit
 import AVFoundation
@@ -153,6 +143,15 @@ struct GestureLogic {
         lastCam = n
         return .camMove(x: n.x, y: n.y)
     }
+    /// Closes whatever drag is open (left or camera) at its last known point, so the host always releases the button.
+    /// Used when the app is interrupted mid-drag (backgrounded, menu opened, view removed).
+    mutating func cancelAll() -> [InputEvent] {
+        var out: [InputEvent] = []
+        if dragging { dragging = false; out.append(.dragEnd(x: lastDrag.x, y: lastDrag.y)) }
+        if camDragging { camDragging = false; out.append(.camEnd(x: lastCam.x, y: lastCam.y)) }
+        longPressActive = false
+        return out
+    }
     /// Always closes an open camera drag so the host releases the middle button.
     mutating func camEnded(_ p: CGPoint, bounds: CGRect) -> InputEvent? {
         // Nothing to close if no camera drag is open.
@@ -235,6 +234,9 @@ final class GestureMapper: NSObject, UIGestureRecognizerDelegate {
     func gestureRecognizer(_ a: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith b: UIGestureRecognizer) -> Bool { false }
 
     /// Tap recognizer callback.
+    /// Releases any held button (see GestureLogic.cancelAll). Safe to call at any time.
+    func cancelAll() { for e in logic.cancelAll() { emit(e) } }
+
     @objc private func onTap(_ g: UITapGestureRecognizer) {
         // Act only when the tap is complete, and only if it landed on the video.
         guard g.state == .ended, let v = view, let e = logic.tap(g.location(in: v), bounds: v.bounds) else { return }

@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: OSRSZonesTests.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Unit tests for OSRS window touch zone classification.
-//          Inputs: Coordinate test points across fixed classic layout boundaries.
-//          Outputs: Zone classification assertions verifying world vs UI region detection.
-//          Design Rationale: Confirms accurate separation between camera rotation zones and interface interaction zones.
-// ==============================================================================
+// Program: Lantern - OSRSZonesTests.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Tests the world-versus-interface touch zones.
+//
 // Area protected: OSRSZones, the helper that decides whether a point on the
 // streamed picture lies over the game world (where a tap means "walk/click in
 // the world") or over an interface area such as inventory, chat, minimap or a

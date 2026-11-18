@@ -1,28 +1,15 @@
-// ==============================================================================
-// Program: InputInjector.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Simulated mouse and keyboard event synthesis using macOS CoreGraphics event taps.
-//          Inputs: Normalized InputEvents from authenticated client.
-//          Outputs: Synthesized CGEvent mouse moves, clicks, scrolls, and key presses dispatched to target window.
-//          Design Rationale: Asserts target window focus and visibility before dispatching input; bounds-checks
-//          coordinates to prevent input escaping to other applications.
-// ==============================================================================
+// Program: Lantern - InputInjector.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Turns phone input into real Mac mouse and keyboard events, only after strict window, focus and cover checks.
+//
 // InputInjector.swift - turns phone touches/keys into real mouse/keyboard events on the Mac, but only after
 // many safety checks pass.
 // Who calls it: HostSession (serving) and lantern-host's inject-test.
-// RuneLite Remote Streaming Input Safety & Hardware Injection Pipeline:
-//   - Accessibility Permissions: macOS requires explicit user granting of Accessibility permissions
-//     to create and post CGEvents to the window server via `CGEventPostToPid`.
-//   - Window Isolation & Frontmost Guarantee:
-//     * Injects events strictly targeting the designated RuneLite PID.
-//     * Auto-focus brings RuneLite frontmost if configured; otherwise drops input if RuneLite is not frontmost.
-//     * Occlusion Detection: Verifies that no overlapping dialog, terminal, or system window covers the target coordinate.
-//   - Coordinate Validation: Coordinates outside the client window frame are strictly dropped to prevent mouse escape.
-//   - Rate Limiting & Fail-Safe Kill Switch:
-//     * Rate-limits input event frequency via HostInputGate to prevent script-driven macro speeds.
-//     * Auto-releases held mouse buttons and keys on disconnect, window occlusion, or process termination.
+// Key ideas for beginners: 'Accessibility' is a macOS permission that lets a program watch windows and post
+// events. 'Focus' = which window receives keystrokes; 'frontmost' = which app is in front; 'occluded' = another
+// window covers the spot. The injector refuses (throws) instead of guessing. It acts on ONE target window
+// and never on others. Protocols (WindowEnvironment, ActionSink) let tests run without touching the screen.
 
 // ApplicationServices: the Accessibility API (AXUIElement...), which lets a program ask which window has focus and requires the user's Accessibility permission.
 import ApplicationServices
@@ -251,16 +238,19 @@ public final class InputInjector: @unchecked Sendable {
         }
         // Rule 6: the rate limiter and drag-state gate (e.g. a drag move without a drag start is rejected).
         guard gate.admit(event, nowMs: clock()) else { throw InjectError.rejected }
-        // All checks passed: carry out the planned actions in order.
-        for a in actions { try sink.perform(a) }
-        // Remember where drags are, so releaseAll can let go at the right spot.
+        // Remember where drags are BEFORE posting, so releaseAll can always let go at the right spot even if posting fails half way.
         switch event {
         case .dragStart(let x, let y), .dragMove(let x, let y):
             lastDragPoint = WindowGeometry.point(normX: x, normY: y, in: frame)
-        // Ended: forget the position.
-        case .dragEnd: lastDragPoint = nil
         case .camStart(let x, let y), .camMove(let x, let y):
             lastCamPoint = WindowGeometry.point(normX: x, normY: y, in: frame)
+        default: break
+        }
+        // All checks passed: carry out the planned actions in order.
+        for a in actions { try sink.perform(a) }
+        // Ended: forget the position.
+        switch event {
+        case .dragEnd: lastDragPoint = nil
         case .camEnd: lastCamPoint = nil
         default: break
         }
@@ -306,7 +296,7 @@ public struct SystemWindowEnvironment: WindowEnvironment {
             if AXUIElementGetPid(el as! AXUIElement, &pid) == .success { return pid }
         }
         // Fallback when Accessibility cannot answer.
-        return NSWorkspace.shared.frontmostApplication?.processIdentifier
+        return nil   // fail closed: if Accessibility cannot say who is in front, treat it as "not the target app"
     }
     // Instance version: uses the live window list.
     public func topWindow(at point: CGPoint) -> (id: UInt32, pid: Int32)? {
@@ -434,13 +424,13 @@ public final class CGEventSink: ActionSink, @unchecked Sendable {
         case .keyText(let text, let mods):
             // Modifier flags from the phone (shift/ctrl/alt/cmd).
             // Java AWT (RuneLite) derives the key from the virtual keycode, so every character goes out with its real
-            // US-ANSI keycode (shift flag for the shifted glyph) plus the unicode string; only characters that are not on
-            // a US keyboard fall back to keycode 0 + unicode string. Control keys carry no string. Down, short pause, up.
+            // US-ANSI keycode (shift flag for the shifted glyph) plus the unicode string; characters that are not on
+            // a US keyboard are skipped (they would be typed as "a"). Control keys carry no string. Down, short pause, up.
             let baseFlags = Self.flags(mods)
             // Go through the text one character at a time.
             for ch in text {
                 // Look up key code, shift need and whether to attach the Unicode text.
-                let (vk, shift, sendString) = Self.keyInfo(ch)
+                guard let (vk, shift, sendString) = Self.keyInfo(ch) else { continue }
                 // Add shift if the character needs it.
                 var flags = baseFlags
                 if shift { flags.insert(.maskShift) }
@@ -477,10 +467,10 @@ public final class CGEventSink: ActionSink, @unchecked Sendable {
         "\"":(39,true),"<":(43,true),">":(47,true),"?":(44,true),"~":(50,true),
     ]
     // Returns (key code, needs shift, attach Unicode text) for one character.
-    static func keyInfo(_ c: Character) -> (UInt16, Bool, Bool) {
+    static func keyInfo(_ c: Character) -> (UInt16, Bool, Bool)? {
         // Special keys first (Return, Tab, Backspace, space).
         switch c {
-        case "\n", "\r": return (36, false, false)      // Return
+        case "\n", "\r", "\r\n": return (36, false, false)      // Return
         case "\t": return (48, false, false)            // Tab
         case "\u{8}": return (51, false, false)         // Backspace
         case " ": return (49, false, true)
@@ -490,8 +480,9 @@ public final class CGEventSink: ActionSink, @unchecked Sendable {
         if let e = ansi[c] { return (e.0, e.1, true) }
         // Uppercase letters: use the lowercase key with shift.
         if c.isUppercase, let l = c.lowercased().first, let e = ansi[l] { return (e.0, true, true) }
-        // Anything else: key code 0 with the Unicode text.
-        return (0, false, true)                           // not on a US keyboard: unicode string only
+        // Anything else is not on a US keyboard. Java would read key code 0 as the letter "a", so such characters are
+        // skipped (nil) instead of being typed wrongly.
+        return nil
     }
 
     // Converts the 4 modifier bits into CGEventFlags.

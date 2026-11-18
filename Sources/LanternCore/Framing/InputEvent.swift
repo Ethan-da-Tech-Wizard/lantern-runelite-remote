@@ -1,13 +1,8 @@
-// ==============================================================================
-// Program: InputEvent.swift
-// Programmer: Ethan-da-Tech-Wizard
-// Course: CIS 156 / Advanced Systems
-// Last Modified: November 18, 2026
-// Purpose: Defines every touch and keyboard input event transmitted from client to host.
-//          Inputs: Touch coordinates (normalized 0.0-1.0), drag deltas, and keyboard character codes.
-//          Outputs: Compact 8-16 byte binary structures transmitted over the encrypted channel.
-//          Design Rationale: Normalized coordinates decouple mobile screen geometry from server display resolution.
-// ==============================================================================
+// Program: Lantern - InputEvent.swift
+// Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+// Last Modified: 2026-11-18
+// Purpose: Defines every touch/keyboard event the phone can send and its compact wire format.
+//
 // =====================================================================================
 // InputEvent.swift
 //

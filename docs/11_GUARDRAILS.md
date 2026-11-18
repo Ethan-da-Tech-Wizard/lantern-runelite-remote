@@ -15,7 +15,7 @@ A remote view of one window of your own Mac (an approved client, started by you 
 - It has no accounts, analytics or tracking (scripts/check_no_telemetry.sh).
 
 ## Timing, stated honestly
-The host adds small fixed pauses so Java apps register the pointer: 20 ms before a mouse press, 30 ms before a release, 10 ms after each key press and each key release when typing. Input older than 250 ms is dropped, never replayed late, and at most 40 events per second are accepted. There is no smoothing, batching, recording or replay of input.
+The host adds small fixed pauses so Java apps register the pointer: 20 ms before a mouse press, 30 ms before a release, 10 ms after each key press and each key release when typing. Input older than 250 ms is dropped, never replayed late, and at most 80 events per second are accepted. There is no smoothing, batching, recording or replay of input.
 
 ## Developer test hooks
 The iPhone app has launch-argument test helpers (auto-pair, one test tap). They sit inside `#if DEBUG` blocks and are compiled out of release builds (ClientModel.swift).

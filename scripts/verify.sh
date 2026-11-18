@@ -1,14 +1,9 @@
 #!/bin/bash
-# ==============================================================================
-# Program: verify.sh
-# Programmer: Ethan-da-Tech-Wizard
-# Course: CIS 156 / Advanced Systems
-# Last Modified: November 18, 2026
-# Purpose: Post-build security and integrity verification test suite.
-#          Inputs: Build artifacts, Package.resolved, and binary executables.
-#          Outputs: Verification report verifying zero external dependencies, Apple-only frameworks, and clean socket bindings.
-#          Design Rationale: Enforces strict software supply chain security and project guardrails automatically.
-# ==============================================================================
+# Program: Lantern - verify.sh
+# Programmer: Ethan-da-Tech-Wizard (written with Claude, an AI assistant)
+# Last Modified: 2026-11-18
+# Purpose: Post-build checks: no third-party dependencies, Apple-only frameworks, no telemetry strings.
+#
 # Post-build checks: no 3rd-party deps, Apple-only linked frameworks, no telemetry strings, no wildcard listeners.
 # Safety settings: stop on errors, error on unset variables, fail pipelines when any part fails.
 set -euo pipefail
