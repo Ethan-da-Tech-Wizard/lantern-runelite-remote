@@ -177,7 +177,7 @@ final class NetTests: XCTestCase {
         // Hook: record each received frame.
         c.onVideoFrame = { d, k in frames.add(VideoFrame(data: d, isKeyframe: k, ptsUs: 0, frameID: 0)) }
         // Act: pair using a lowercase code and a device name.
-        let info = try await c.pair(code: code.displayString.lowercased(), deviceName: "Ethan's phone")
+        let info = try await c.pair(code: code.displayString.lowercased(), deviceName: "Test phone")
         // Assert: the client learned the host name.
         XCTAssertEqual(info.name, "Host")
         // Assert: the client saved the host (one peer).
@@ -187,7 +187,7 @@ final class NetTests: XCTestCase {
         // Assert: the host saved the client.
         XCTAssertEqual(try hks.peers().count, 1)                                   // host stored the client
         // Assert: its saved name matches what the client sent.
-        XCTAssertEqual(try hks.peers()[0].name, "Ethan's phone")
+        XCTAssertEqual(try hks.peers()[0].name, "Test phone")
         // Assert: its saved key is the client's key.
         XCTAssertEqual(try hks.peers()[0].publicKey, try cks.loadOrCreateDeviceKey().publicKey.rawRepresentation)
         // Wait for the host's pairing callback.

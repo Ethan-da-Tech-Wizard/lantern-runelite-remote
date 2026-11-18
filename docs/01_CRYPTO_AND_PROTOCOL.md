@@ -1,3 +1,5 @@
+> Awaiting Jagex approval. Not for use. See the README.
+
 # 01 Crypto and Protocol (host window stream, macOS host to iOS client, LAN)
 
 Tags: [V]=verified-source, [I]=inferred, [U]=unknown. Sources: Noise spec https://noiseprotocol.org/noise.html ; CryptoKit https://developer.apple.com/documentation/cryptokit ; Network.framework https://developer.apple.com/documentation/network ; TLS options https://developer.apple.com/documentation/security/sec_protocol_options ; Keychain https://developer.apple.com/documentation/security/keychain-services ; WireGuard https://www.wireguard.com/protocol/ ; CPace https://datatracker.ietf.org/doc/draft-irtf-cfrg-cpace/ ; OPAQUE RFC 9807.

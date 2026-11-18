@@ -1,3 +1,5 @@
+> Awaiting Jagex approval. Not for use. See the README.
+
 # Lantern: Architecture
 
 Native Swift. macOS host (CLI only, `lantern-host`) plus an iOS client app. No web UI, no accounts, no telemetry, LAN only. Host is off until the user starts `serve`. Wire format and crypto are in 01; threats in 03; build status in 00_INDEX.md. This file was rewritten 2026-11-17 to match the code; an earlier draft described a TCP FrameCodec, SPAKE2 and a menu-bar app, none of which exist.

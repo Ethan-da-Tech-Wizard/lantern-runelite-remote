@@ -1,3 +1,5 @@
+> Awaiting Jagex approval. Not for use. See the README.
+
 # 10 Virtual Display (phone-shaped, in-house)
 
 Replaces paid BetterDisplay (see 06_OPEN_REPLACEMENTS.md). Library only, no CLI, no account, no network.

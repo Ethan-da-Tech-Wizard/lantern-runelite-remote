@@ -1,3 +1,5 @@
+> Awaiting Jagex approval. Not for use. See the README.
+
 # 03 Threat model and rules: LAN screen + touch streamer (Mac host, iPhone client)
 
 Date: 2026-11-17. Not legal advice. [relayed] = taken from the research files in section 6, not re-verified.
@@ -90,7 +92,7 @@ All items [relayed] from the research files in section 6 (Jagex text via the OSR
 
 ## 6. Sources
 
-docs/ios_runelite/research/02_jagex_rules.md; data/ios_runelite_launcher/M17_legal_streaming_verdict.md; data/ios_runelite_launcher/M17_threat_model.md; docs/ios_runelite/replicate/RUNBOOK.md and 08_build_our_own_stream.md.
+Background notes were kept in the author private working folder and are not part of this repository.
 
 ## 7. Privacy rules
 

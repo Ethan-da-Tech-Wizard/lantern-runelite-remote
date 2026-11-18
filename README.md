@@ -6,9 +6,12 @@
 
 ## What it is
 Lantern shows one window of your own Mac (a RuneLite window) on your own iPhone over your home Wi-Fi.
-Touches on the phone are turned into ordinary mouse and keyboard input on the Mac. Every action in the game is
-a human tap or keystroke; nothing is automated, scripted or repeated. It does not read or change the game client,
-never sees login details, and has no accounts, analytics or tracking.
+Touches on the phone are turned into ordinary mouse and keyboard input on the Mac. There is no gameplay
+automation: every in-game action comes from a live human touch or keystroke, and nothing repeats on its own.
+The phone view is a picture of the window, so it can show whatever the window shows (including a login screen).
+It does not read the game's memory, intercept its network traffic or modify RuneLite or the game client, and it has
+no accounts, analytics or tracking. The iPhone app contains developer test hooks (launch arguments that pair and
+send one test tap); they sit inside `#if DEBUG` blocks and are compiled out of release builds.
 
 ## How it is built
 - `Sources/LanternCore`: the encrypted network protocol (Noise over UDP), pairing codes, input rules.
@@ -21,4 +24,11 @@ It acts only on the one window it was started on, only while that window is in f
 input, and only talks to a phone that paired with a one-time code. Everything is commented line by line.
 
 ## Placeholders
-The Apple team ID and app ID in the Xcode project are placeholders (`YOUR_TEAM_ID`, `com.example.lantern.client`).
+The Apple team ID and app ID are placeholders everywhere they appear (`YOUR_TEAM_ID`, `com.example.lantern.client`).
+
+## Not affiliated, no license
+Lantern is an unofficial, independent project. It is not affiliated with, endorsed by or approved by Jagex Ltd. or
+RuneLite. There is no license: all rights reserved until Jagex replies (see NOTICE.md).
+
+## Reading the docs
+Confidence tags in the docs: [V] verified from a source, [I] inferred, [U] unknown, [relayed] reported by someone else.

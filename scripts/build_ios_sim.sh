@@ -17,7 +17,7 @@ DD="${1:-${TMPDIR:-/tmp}/lantern-dd-client}"
 # Which simulator to use: the user's choice via LANTERN_SIM, or iPhone 17 by default.
 SIM_NAME="${LANTERN_SIM:-iPhone 17}"
 # The app's bundle identifier, used to launch it after install.
-BID=org.twu.lantern.client
+BID=com.example.lantern.client
 # Build the app with Xcode for the simulator. CODE_SIGNING_ALLOWED=NO because simulators need no signing.
 # 'tail -n 15' shows only the last 15 lines of Xcode's very long output.
 xcodebuild -project "$ROOT/Apps/LanternClient/LanternClient.xcodeproj" -scheme LanternClient \

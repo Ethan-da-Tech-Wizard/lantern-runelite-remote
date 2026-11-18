@@ -1,3 +1,5 @@
+> Awaiting Jagex approval. Not for use. See the README.
+
 # 08 Security review (adversarial, read-only)
 
 Scope: docs/01, 03; LanternCore Noise, Framing, Pairing, Net; LanternHostKit; lantern-host main.swift; NetTransport.swift. Review was by reading code only; no serve/capture/inject was run. NOTE: Sources/LanternCore/Net changed during the review (PairM1 padding and anti-amplification were added); line numbers refer to the files as read after that change.

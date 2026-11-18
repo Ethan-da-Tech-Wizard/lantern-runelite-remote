@@ -134,7 +134,7 @@ cat <<'NEXT'
 2. Accessibility: System Settings > Privacy & Security > Accessibility > allow the same app (needed for touch to mouse).
 3. Real iPhone: open Apps/LanternClient/LanternClient.xcodeproj in Xcode, Signing & Capabilities,
    Team = your own personal team (Xcode > Settings > Accounts > add your own Apple ID; free).
-4. Change the bundle id from org.twu.lantern.client to your own, e.g. com.yourname.lantern.client.
+4. Change the bundle id from com.example.lantern.client to your own, e.g. com.yourname.lantern.client.
 5. Run scripts/verify.sh, then scripts/print_hashes.sh and compare with the sender's manifest.
 NEXT
 # Final verdict: exit 1 if any step failed, otherwise say PASS.

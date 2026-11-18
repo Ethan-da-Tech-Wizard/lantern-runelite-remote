@@ -1,3 +1,5 @@
+> Awaiting Jagex approval. Not for use. See the README.
+
 # One-command setup (design and results, 2026-11-17)
 
 ## Scripts (all `set -euo pipefail`, idempotent, never sudo, never install, never curl|bash)
