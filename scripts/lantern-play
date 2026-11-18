@@ -1,0 +1,22 @@
+#!/bin/bash
+# lantern-play: start the Lantern host on the RuneLite game window and print the pairing code.
+# Prerequisite (human, once per session): start the game from the JAGEX LAUNCHER (Game client = RuneLite).
+# Never starts the game for you and never types credentials. Nothing here uses root or the network beyond your LAN.
+set -u
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+HOST="$ROOT/.build/debug/lantern-host"
+PORT="${LANTERN_PORT:-47711}"
+MINUTES="${LANTERN_PAIR_MINUTES:-10}"
+IP="${LANTERN_BIND:-$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null)}"
+[ -x "$HOST" ] || { echo "Build first: (cd $ROOT && swift build --product lantern-host)"; exit 1; }
+[ -n "$IP" ] || { echo "No Wi-Fi address found. Join the same Wi-Fi as the phone."; exit 1; }
+# the game window is titled "RuneLite - <character>"; the plain "RuneLite" window is a login-screen copy, not ours
+WID=$("$HOST" list-windows 2>/dev/null | awk -F'\t' '$2=="RuneLite" && $3 ~ /^RuneLite - /{print $1; exit}')
+if [ -z "$WID" ]; then
+  echo "No RuneLite game window found."
+  echo "Open the Jagex Launcher, pick Game client = RuneLite, press Play. Then run this again."
+  exit 2
+fi
+echo "Game window id $WID. Phone address: $IP:$PORT"
+echo "On the phone: Lantern app > address above > pairing code below (valid ${MINUTES} min)."
+exec "$HOST" serve --bind "$IP" --port "$PORT" --window-id "$WID" --pair --pair-minutes "$MINUTES" --auto-focus
